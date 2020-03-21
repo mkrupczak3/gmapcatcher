@@ -22,21 +22,33 @@ class ComboBoxLayer(gtk.ComboBoxEntry):
         store = ListStore()
         currentMap = 0
         bad_map_servers = self.conf.hide_map_servers.split(',')
+        pref_map_servers = self.conf.order_map_servers.split(',')
+        pos = len( pref_map_servers);
+        mapId = 0;
         for mapSrv in MAP_SERVICES:
             mapName = MAP_SERVERS[mapSrv['ID']]
             if self.conf.oneDirPerMap:
                 if not str(mapSrv['ID']) in bad_map_servers:
-                    if LAYER_MAP in mapSrv['layers']:
-                        store.add(mapName, mapSrv['ID'], mapSrv['layers'][0])
-                    if mapName == self.conf.map_service:
-                        currentMap = len(store) - 1
-                    if (len(mapSrv['layers']) > 0):
-                        for ln in mapSrv['layers']:
-                            if ln > 0:
-                                w = mapName + " " + LAYER_NAMES[ln]
-                                store.add(w, mapSrv['ID'], ln)
-                                if mapName == self.conf.map_service and ln == self.conf.save_layer:
-                                    currentMap = len(store) - 1
+                    # Loop over all entries and store them according to their order position.
+                    for ln in mapSrv['layers']:
+                        if ln > 0:
+                            w = mapName + " " + LAYER_NAMES[ln]
+                        else: 
+                            w = mapName
+                        # orderPos is last element and modified if current layer has an assigned position.
+                        orderPos = pos
+                        for intOrderPos in range( len( pref_map_servers)):
+                            print( "pref_map_servers" + pref_map_servers[ intOrderPos] + ":" + str(intOrderPos))
+                            if w == pref_map_servers[ intOrderPos]:
+                                orderPos = intOrderPos
+                        print( w + ":" + str(orderPos))
+                        store.insertAt( orderPos, w, mapSrv['ID'], ln)
+                        if mapName == self.conf.map_service and ln == self.conf.save_layer:
+                            currentMap = orderPos - 1
+                        # increase pos if no defined order was used.
+                        if pos == orderPos:
+                            pos = pos + 1
+                    mapId = mapId + 1
             else:
                 if mapName == self.conf.map_service:
                     for ln in mapSrv['layers']:
@@ -45,6 +57,7 @@ class ComboBoxLayer(gtk.ComboBoxEntry):
                             currentMap = len(store) - 1
         self.set_model(store)
         self.set_text_column(0)
+        store.set_sort_column_id(3, gtk.SORT_ASCENDING)
         return currentMap
 
     ## Handles the pressing of keys
@@ -66,10 +79,14 @@ class ComboBoxLayer(gtk.ComboBoxEntry):
 
 class ListStore(gtk.ListStore):
     def __init__(self):
-        super(ListStore, self).__init__(TYPE_STRING, TYPE_INT, TYPE_INT)
+        super(ListStore, self).__init__(TYPE_STRING, TYPE_INT, TYPE_INT, TYPE_INT)
 
-    def add(self, str, int1, int2):
+    def insertAt( self, pos, str, int1, int2):
         iter = self.append()
         self.set(iter, 0, str)
         self.set(iter, 1, int1)
         self.set(iter, 2, int2)
+        self.set(iter, 3, pos)
+        
+    def add( self, str, int1, int2):
+        self.insertAt( self.__len__(), str, int1, int2)
