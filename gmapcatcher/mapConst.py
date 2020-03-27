@@ -105,9 +105,10 @@ ADD_MARKER = 7
 MOUSE_LOCATION = 9
 GPS_LOCATION = 10
 GPS_DIRECTIONS = 12
+CALC_AZIMUTH = 14
 DA_MENU = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "Batch Download", "Export Map", "Add Marker",
-        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here"]
+        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth"]
 DA_MENU_LIM = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "-", "-", "Add Marker", "-", "-", "-", "-", "-"]
 

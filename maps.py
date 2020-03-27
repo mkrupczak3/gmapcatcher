@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 ## @package maps
@@ -8,6 +8,8 @@ import gobject
 import re
 import sys
 import time
+import pyproj
+import math
 from threading import Timer
 
 import gmapcatcher.fileUtils as fileUtils
@@ -53,6 +55,9 @@ class MainWindow(gtk.Window):
     map_min_zoom = MAP_MIN_ZOOM_LEVEL
     map_max_zoom = MAP_MAX_ZOOM_LEVEL - 1
     map_skip_zooms = []
+
+    LAST_TWO_CLICKED_MARKERS = []
+    geod = pyproj.Geod(ellps='WGS84')
 
     ## Get the zoom level from the scale
     def get_zoom(self):
@@ -538,6 +543,20 @@ class MainWindow(gtk.Window):
                 dialog = error_msg_non_blocking('GPS disabled', 'GPS disabled.')
                 dialog.connect('response', lambda dialog, response: dialog.destroy())
                 dialog.show()
+        elif strName == DA_MENU[CALC_AZIMUTH]:
+            if len(self.LAST_TWO_CLICKED_MARKERS) >= 2:
+                Lat0 = self.LAST_TWO_CLICKED_MARKERS[-1][0]
+                Lon0 = self.LAST_TWO_CLICKED_MARKERS[-1][1]
+                Lat1 = self.LAST_TWO_CLICKED_MARKERS[-2][0]
+                Lon1 = self.LAST_TWO_CLICKED_MARKERS[-2][1]
+                print(Lat0)
+                print(Lon0)
+                print(Lat1)
+                print(Lon1)
+                azimuth = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[0]
+                distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
+                print("distance=", distance)
+                print("azimuth=", azimuth)
 
     ## utility function screen location of pointer to world coord
     def pointer_to_world_coord(self, pointer=None):
@@ -750,6 +769,16 @@ class MainWindow(gtk.Window):
                     markerDisp2_list.append((markerDisp2, markerName))
                 if len(markerDisp2_list) > 0:
                     self.status_bar.text("Nearest marker:    " + str(sorted(markerDisp2_list)[0][1]))
+                # ********************************** CALC_AZIMUTH patch ******************************************
+                for markerName in self.marker.positions.keys():
+                    # Calculate the angular displacement squared of the mouse coord to the marker coords
+                    markerDisp2 = (self.marker.positions[markerName][0] - coord[0]) ** 2 + (
+                            self.marker.positions[markerName][1] - coord[1]) ** 2
+                    markerDisp2_list.append((markerDisp2, (self.marker.positions[markerName][0],
+                                                            self.marker.positions[markerName][1])))
+                if len(markerDisp2_list) > 0:
+                    self.status_bar.text("Nearest marker:    " + str(sorted(markerDisp2_list)[0][1]))
+                    self.LAST_TWO_CLICKED_MARKERS.append(sorted(markerDisp2_list)[0][1])
 
             # Right-Click event shows the popUp menu
             elif event.button == 3 and not (event.state & gtk.gdk.CONTROL_MASK):
