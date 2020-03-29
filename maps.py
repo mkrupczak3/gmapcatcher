@@ -39,7 +39,7 @@ from gmapcatcher.widgets.widDrawingArea import DrawingArea
 from gmapcatcher.widgets.widMapExport import MapExport
 from gmapcatcher.widgets.widStatusBar import StatusBar
 from gmapcatcher.xmlUtils import kml_to_markers
-
+from gmapcatcher.widgets.cordinateWindow import CordinateWindow
 
 class MainWindow(gtk.Window):
     gps = None
@@ -233,6 +233,11 @@ class MainWindow(gtk.Window):
 
         exw = EXWindow(self.ctx_map, coord, km_px * rect.width, km_px * rect.height, self.layer, self.conf)
         exw.show()
+
+    def azimuth_calc_clicked(self, azimuth, distance):
+        crw = CordinateWindow(azimuth, distance)
+        crw.show()
+        print("cw clicked")
 
     def track_control_clicked(self, w=None, pointer=None):
         if not self.trackw:
@@ -557,6 +562,7 @@ class MainWindow(gtk.Window):
                 distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
                 print("distance=", distance)
                 print("azimuth=", azimuth)
+                self.azimuth_calc_clicked(azimuth, distance)
 
     ## utility function screen location of pointer to world coord
     def pointer_to_world_coord(self, pointer=None):
