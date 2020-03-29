@@ -57,3 +57,4 @@ For a complete list of tested OS, see wiki [Tested Operating Systems](https://gi
 
 If you choose to run directly from sources you must have all dependencies, see wiki: 
 https://github.com/heldersepu/GMapCatcher/blob/wiki/devEnv.md
+or see [win_install](win_install.md) for windows.
