@@ -234,11 +234,6 @@ class MainWindow(gtk.Window):
         exw = EXWindow(self.ctx_map, coord, km_px * rect.width, km_px * rect.height, self.layer, self.conf)
         exw.show()
 
-    def azimuth_calc_clicked(self, azimuth, distance):
-        crw = CordinateWindow(azimuth, distance)
-        crw.show()
-        print("cw clicked")
-
     def track_control_clicked(self, w=None, pointer=None):
         if not self.trackw:
             self.trackw = trackWindow(self)
@@ -558,11 +553,15 @@ class MainWindow(gtk.Window):
                 print(Lon0)
                 print(Lat1)
                 print(Lon1)
+                start_point = self.LAST_TWO_CLICKED_MARKERS[-2]
+                end_point = self.LAST_TWO_CLICKED_MARKERS[-1]
                 azimuth = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[0]
                 distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
                 print("distance=", distance)
                 print("azimuth=", azimuth)
-                self.azimuth_calc_clicked(azimuth, distance)
+                crw = CordinateWindow(azimuth, distance, start_point, end_point)
+                crw.show()
+
 
     ## utility function screen location of pointer to world coord
     def pointer_to_world_coord(self, pointer=None):
