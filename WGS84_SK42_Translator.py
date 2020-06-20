@@ -103,7 +103,7 @@ class Translator(object):
         L = Ld * math.pi / 180
         M = cls.a * (1 - cls.e2) / math.pow((1 - cls.e2 * math.pow(math.sin(B), 2)), 1.5)
         N = cls.a * math.pow((1 - cls.e2 * math.pow(math.sin(B), 2)), -0.5)
-        result = cls.ro / (M + H) * (N / cls.a * cls.e2 * math.sin(B) * math.cos(B) * cls.da + (math.pow(N, 2) / math.pow(cls.a, 2) + 1) * N * math.sin(B) * math.cos(B) * cls.e2 / 2 - (cls.dx * math.cos(L) + cls.dy * math.sin(L)) * math.sin(B) + cls.dz * math.cos(B)) - cls.wx * math.sin(L) * (1 + cls.e2 * math.cos(2 * B)) + cls.wy * math.cos(L) * (1 + cls.e2 * math.cos(2 * B)) - cls.ro * cls.ms * cls.e2 * math.sin(B) * math.cos(B)
+        result = cls.ro / (M + H) * (N / cls.a * cls.e2 * math.sin(B) * math.cos(B) * cls.da + (N ** 2 / cls.a ** 2 + 1) * N * math.sin(B) * math.cos(B) * cls.de2 / 2 - (cls.dx * math.cos(L) + cls.dy * math.sin(L)) * math.sin(B) + cls.dz * math.cos(B)) - cls.wx * math.sin(L) * (1 + cls.e2 * math.cos(2 * B)) + cls.wy * math.cos(L) * (1 + cls.e2 * math.cos(2 * B)) - cls.ro * cls.ms * cls.e2 * math.sin(B) * math.cos(B)
         return result
 
     #
