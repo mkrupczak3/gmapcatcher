@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ## @package gmapcatcher.widgets.EXWindow
-# Widget that allows Export of entire locations to new tiles repository
+# Widget that displays azimuth, lat/long, sk42 cordinates
 
 import pygtk
 pygtk.require('2.0')

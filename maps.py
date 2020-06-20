@@ -40,6 +40,7 @@ from gmapcatcher.widgets.widMapExport import MapExport
 from gmapcatcher.widgets.widStatusBar import StatusBar
 from gmapcatcher.xmlUtils import kml_to_markers
 from gmapcatcher.widgets.cordinateWindow import CordinateWindow
+from gmapcatcher.widgets.sk42calculator import Sk42Calculator
 
 class MainWindow(gtk.Window):
     gps = None
@@ -561,6 +562,10 @@ class MainWindow(gtk.Window):
                 print("azimuth=", azimuth)
                 crw = CordinateWindow(azimuth, distance, start_point, end_point)
                 crw.show()
+        elif strName == DA_MENU[SK42_CALC]:
+            sk42calc = Sk42Calculator()
+            sk42calc.show()
+            pass
 
 
     ## utility function screen location of pointer to world coord
@@ -773,7 +778,10 @@ class MainWindow(gtk.Window):
                             self.marker.positions[markerName][1] - coord[1]) ** 2
                     markerDisp2_list.append((markerDisp2, markerName))
                 if len(markerDisp2_list) > 0:
-                    self.status_bar.text("Nearest marker:    " + str(sorted(markerDisp2_list)[0][1]))
+                    # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
+                    debug=str(sorted(markerDisp2_list)[0][1])
+                    print type(debug), debug
+                    self.status_bar.text("9090")
                 # ********************************** CALC_AZIMUTH patch ******************************************
                 for markerName in self.marker.positions.keys():
                     # Calculate the angular displacement squared of the mouse coord to the marker coords
@@ -782,7 +790,7 @@ class MainWindow(gtk.Window):
                     markerDisp2_list.append((markerDisp2, (self.marker.positions[markerName][0],
                                                             self.marker.positions[markerName][1])))
                 if len(markerDisp2_list) > 0:
-                    self.status_bar.text("Nearest marker:    " + str(sorted(markerDisp2_list)[0][1]))
+                    # self.status_bar.text("Nearest marker:    " + str(sorted(markerDisp2_list)[0][1]))
                     self.LAST_TWO_CLICKED_MARKERS.append(sorted(markerDisp2_list)[0][1])
 
             # Right-Click event shows the popUp menu
