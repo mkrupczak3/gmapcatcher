@@ -5,6 +5,7 @@
 import pygtk
 pygtk.require('2.0')
 import gtk
+from WGS84_SK42_Translator import Translator as converter
 
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
@@ -31,13 +32,13 @@ class CordinateWindow(gtk.Window):
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("longitude:"))
-            self.azimuth = myEntry("%.6g" % start_point[0], 10, False)
+            self.azimuth = myEntry("%.6f" % start_point[0], 10, False)
             hbox.pack_start(self.azimuth, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("latitude:"))
-            self.distance = myEntry("%.6g" % start_point[1], 10, False)
+            self.distance = myEntry("%.6f" % start_point[1], 10, False)
             hbox.pack_start(self.distance, False)
             vbox.pack_start(hbox)
 
@@ -47,17 +48,38 @@ class CordinateWindow(gtk.Window):
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("longitude:"))
-            self.entry = myEntry("%.6g" % end_point[0], 10, False)
+            self.entry = myEntry("%.6f" % end_point[0], 10, False)
+            print(end_point[0])
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("latitude:"))
-            self.entry = myEntry("%.6g" % end_point[1], 10, False)
+            self.entry = myEntry("%.6f" % end_point[1], 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             return myFrame("End Point", vbox)
+
+        def _wgs_to_sk42():
+            height = 0 
+            convertedLat = converter.WGS84_SK42_Lat(end_point[1],end_point[0],height)
+            convertedLong = converter.WGS84_SK42_Long(end_point[1],end_point[0],height)
+
+            vbox = gtk.VBox(False, 5)
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("longitude:"))
+            self.entry = myEntry("%.9f" % convertedLong, 10, False)
+            hbox.pack_start(self.entry, False)
+            vbox.pack_start(hbox)
+
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("latitude:"))
+            self.entry = myEntry("%.9f" % convertedLat, 10, False)
+            hbox.pack_start(self.entry, False)
+            vbox.pack_start(hbox)
+
+            return myFrame("SK42", vbox)
 
 
         gtk.Window.__init__(self)
@@ -66,6 +88,7 @@ class CordinateWindow(gtk.Window):
         hbox.pack_start(_area())
         hbox.pack_start(_start_point())
         hbox.pack_start(_end_point())
+        hbox.pack_start(_wgs_to_sk42())
         vbox.pack_start(hbox)
         self.add(vbox)
         self.set_title("Azimuth and Distance Calculator")
