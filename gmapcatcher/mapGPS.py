@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 ## @package gmapcatcher.mapGPS
+
 # GPS Support
 
 available = True
@@ -13,7 +15,6 @@ import widgets.mapPixbuf as mapPixbuf
 from threading import Event, Thread
 import time
 from datetime import datetime, timedelta
-
 
 if time.localtime().tm_isdst:
     offset = timedelta(seconds=time.altzone)
