@@ -558,6 +558,8 @@ class MainWindow(gtk.Window):
                 end_point = self.LAST_TWO_CLICKED_MARKERS[-1]
                 azimuth = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[0]
                 distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
+                if azimuth < 0:
+                    azimuth += 360
                 print("distance=", distance)
                 print("azimuth=", azimuth)
                 crw = CordinateWindow(azimuth, distance, start_point, end_point)
@@ -779,9 +781,8 @@ class MainWindow(gtk.Window):
                     markerDisp2_list.append((markerDisp2, markerName))
                 if len(markerDisp2_list) > 0:
                     # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
-                    debug=str(sorted(markerDisp2_list)[0][1])
-                    print type(debug), debug
-                    self.status_bar.text("9090")
+                    closestMarkerName=str(sorted(markerDisp2_list)[0][1])
+                    self.status_bar.text(closestMarkerName)
                 # ********************************** CALC_AZIMUTH patch ******************************************
                 for markerName in self.marker.positions.keys():
                     # Calculate the angular displacement squared of the mouse coord to the marker coords
