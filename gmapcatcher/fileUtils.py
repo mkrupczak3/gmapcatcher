@@ -13,6 +13,7 @@ def read_file(strInfo, filePath, maxLine=0):
     if os.path.exists(filePath):
         p = re.compile(strInfo + '="([^"]+)".*lat="([^"]+)".*lng="([^"]+)".*')
         q = re.compile('.*zoom="([^"]+)".*')
+        color_query = re.compile('.*color="([^"]+)".*')
         file = open(filePath, "r")
         for line in file:
             try:
@@ -21,7 +22,7 @@ def read_file(strInfo, filePath, maxLine=0):
                 if (line[0] != '#'):
                     m = p.search(line)
                     if m:
-                        zoom = 10
+                        zoom = 15
                         z = q.search(line)
                         if z:
                             zoom = int(z.group(1))
@@ -29,9 +30,14 @@ def read_file(strInfo, filePath, maxLine=0):
                             name = '%s %i' % (m.group(1), len(fileData))
                         else:
                             name = m.group(1)
+                        color = 0 
+                        c = color_query.search(line)
+                        if c != None:
+                            color = int(c.group(1))
                         fileData[name] = (float(m.group(2)),
                                                 float(m.group(3)),
-                                                zoom)
+                                                zoom,
+                                                color)
                 if (maxLine > 0):
                     if (len(fileData) > maxLine):
                         break
@@ -63,15 +69,15 @@ def write_file(strInfo, filePath, fileData):
         "# Additionally, comments (such as these) may be inserted on\n" +
         "# lines sarting with a '#' symbol.\n" +
         "#\n" + "# For example:\n" + "#\n" +
-        ('#   ' + strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\n' %
-         ("Paris, France", 48.856667, 2.350987, 5)) + "#\n")
+        ('#   ' + strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\tcolor="%i"\n' %
+         ("Paris, France", 48.856667, 2.350987, 15, 0)) + "#\n")
 
     for l in sorted(fileData.keys()):
         # The method 'write' takes an unicode string here and acording to python manual
         # it translates it automatically to string buffer acording to system defaults.
         # Probably all systems translate unicode to UTF-8
-        file.write(strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\n' %
-                  (l.encode('UTF-8'), fileData[l][0], fileData[l][1], fileData[l][2]))
+        file.write(strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\tcolor="%i"\n' %
+                  (l.encode('UTF-8'), fileData[l][0], fileData[l][1], fileData[l][2], fileData[l][3]))
     file.close()
 
 
@@ -84,11 +90,11 @@ def append_file(strInfo, filePath, strData, strName, extraTag=False):
         print '  ' + filePath
         return
     if extraTag:
-        file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\t%s\n' %
-                  (strName, strData[0], strData[1], strData[2] + 2, extraTag))
+        file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\t%s\n' %
+                  (strName, strData[0], strData[1], strData[2] + 2, strData[3], extraTag))
     else:
-        file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\n' %
-                  (strName, strData[0], strData[1], strData[2] + 2))
+        file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\n' %
+                  (strName, strData[0], strData[1], strData[2] + 2, strData[3]))
     file.close()
 
 
