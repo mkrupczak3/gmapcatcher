@@ -82,7 +82,7 @@ def write_file(strInfo, filePath, fileData):
 
 
 ## Append the location (strData) to given file (filePath)
-def append_file(strInfo, filePath, strData, strName, extraTag=False):
+def append_file(strInfo, filePath, strData, strName, color, extraTag=False):
     try:
         file = open(filePath, "a")
     except Exception:
@@ -91,10 +91,10 @@ def append_file(strInfo, filePath, strData, strName, extraTag=False):
         return
     if extraTag:
         file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\t%s\n' %
-                  (strName, strData[0], strData[1], strData[2] + 2, strData[3], extraTag))
+                  (strName, strData[0], strData[1], strData[2] + 2, color, extraTag))
     else:
         file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\n' %
-                  (strName, strData[0], strData[1], strData[2] + 2, strData[3]))
+                  (strName, strData[0], strData[1], strData[2] + 2, color))
     file.close()
 
 

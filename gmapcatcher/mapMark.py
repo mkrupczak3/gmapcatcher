@@ -24,7 +24,7 @@ class MyMarkers:
     def append_marker(self, coord, strName=None, extraTag=False):
         if strName is None:
             strName = str(coord[0]) + '_' + str(coord[1])
-        fileUtils.append_file('marker', self.markerPath, coord, strName, extraTag)
+        fileUtils.append_file('marker', self.markerPath, coord, strName, 0, extraTag)
 
     def __init__(self, configpath=None):
         localPath = os.path.expanduser(configpath or DEFAULT_PATH)
