@@ -22,16 +22,25 @@ class AddMarker(gtk.Window):
 
             return myFrame(" Marker Name", vbox)
 
-        def _color():
+        def _color_debug():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Color:"))
-            self.entry = myEntry("%.6s" % MARKER_GREEN, 10, False)
+
+            self.store = gtk.ListStore(str)
+            self.store.append(["green"])
+            self.store.append(["red"])
+            self.store.append(["blue"])
+            self.store.append(["yellow"])
+
+            self.entry = gtk.ComboBoxEntry(self.store)
+
             self._marker_color = self.entry
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             return myFrame(" Color", vbox)
+
         def btn_ok():
             button = gtk.Button(stock=gtk.STOCK_OK)
             button.connect("clicked", btn_calculate_clicked)
@@ -41,7 +50,16 @@ class AddMarker(gtk.Window):
             return hbox
 
         def btn_calculate_clicked(button):
-            handler(int(self._marker_color.get_text()),
+
+            if self._marker_color.get_active_text == "green":
+                color = MARKER_GREEN
+            elif self._marker_color.get_active_text() == "blue":
+                color = MARKER_BLUE
+            elif self._marker_color.get_active_text() == "yellow":
+                color = MARKER_YELLOW
+            else:
+                color = MARKER_DEFAULT_COLOR
+            handler(color,
                         str(self._marker_name.get_text()),
                         pointer)
             self.destroy()
@@ -51,10 +69,9 @@ class AddMarker(gtk.Window):
         vbox = gtk.VBox(False, 5)
         hbox.pack_start(btn_ok())
         vbox.pack_start(hbox)
-        vbox.pack_start(_color())
+        vbox.pack_start(_color_debug())
         vbox.pack_start(_markerName())
         self.add(vbox)
         self.set_title("Add New Marker")
         self.set_border_width(10)
         self.show_all()
-        print "debug"
