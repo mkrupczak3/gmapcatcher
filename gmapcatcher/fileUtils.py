@@ -58,26 +58,43 @@ def write_file(strInfo, filePath, fileData):
         print 'Error! Can NOT write file:'
         print '  ' + filePath
         return
-
-    file.write(codecs.BOM_UTF8+"# This is the " + strInfo + "s file used by GMapCatcher.\n" +
-        "#\n" +
-        "# This file contains a list of Locations/Position.\n" +
-        "# Each entry should be kept on an individual line,\n" +
-        "# and MUST have a unique name.\n" +
-        "# The latitude, longitud and zoom should be TAB separated.\n" +
-        "#\n" +
-        "# Additionally, comments (such as these) may be inserted on\n" +
-        "# lines sarting with a '#' symbol.\n" +
-        "#\n" + "# For example:\n" + "#\n" +
-        ('#   ' + strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\tcolor="%i"\n' %
-         ("Paris, France", 48.856667, 2.350987, 15, 0)) + "#\n")
+    if strInfo == 'marker':
+        file.write(codecs.BOM_UTF8+"# This is the " + strInfo + "s file used by GMapCatcher.\n" +
+            "#\n" +
+            "# This file contains a list of Locations/Position.\n" +
+            "# Each entry should be kept on an individual line,\n" +
+            "# and MUST have a unique name.\n" +
+            "# The latitude, longitud and zoom should be TAB separated.\n" +
+            "#\n" +
+            "# Additionally, comments (such as these) may be inserted on\n" +
+            "# lines sarting with a '#' symbol.\n" +
+            "#\n" + "# For example:\n" + "#\n" +
+            ('#   ' + strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\tcolor="%i"\n' %
+             ("Paris, France", 48.856667, 2.350987, 15, 0)) + "#\n")
+    else:
+        file.write(codecs.BOM_UTF8+"# This is the " + strInfo + "s file used by GMapCatcher.\n" +
+            "#\n" +
+            "# This file contains a list of Locations/Position.\n" +
+            "# Each entry should be kept on an individual line,\n" +
+            "# and MUST have a unique name.\n" +
+            "# The latitude, longitud and zoom should be TAB separated.\n" +
+            "#\n" +
+            "# Additionally, comments (such as these) may be inserted on\n" +
+            "# lines sarting with a '#' symbol.\n" +
+            "#\n" + "# For example:\n" + "#\n" +
+            ('#   ' + strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\n' %
+             ("Paris, France", 48.856667, 2.350987, 15)) + "#\n")
 
     for l in sorted(fileData.keys()):
         # The method 'write' takes an unicode string here and acording to python manual
         # it translates it automatically to string buffer acording to system defaults.
         # Probably all systems translate unicode to UTF-8
-        file.write(strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\tcolor="%i"\n' %
-                  (l.encode('UTF-8'), fileData[l][0], fileData[l][1], fileData[l][2], fileData[l][3]))
+        if strInfo == "marker":
+            file.write(strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\tcolor="%i"\n' %
+                      (l.encode('UTF-8'), fileData[l][0], fileData[l][1], fileData[l][2], fileData[l][3]))
+        else:
+            file.write(strInfo + '="%s"\tlat="%f"\tlng="%f"\tzoom="%i"\n' %
+                      (l.encode('UTF-8'), fileData[l][0], fileData[l][1], fileData[l][2]))
     file.close()
 
 
@@ -89,12 +106,20 @@ def append_file(strInfo, filePath, strData, strName, color, extraTag=False):
         print 'Error! Can NOT write file:'
         print '  ' + filePath
         return
-    if extraTag:
-        file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\t%s\n' %
-                  (strName, strData[0], strData[1], strData[2] + 2, color, extraTag))
+    if strInfo == "marker":
+        if extraTag:
+            file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\t%s\n' %
+                      (strName, strData[0], strData[1], strData[2] + 2, color, extraTag))
+        else:
+            file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\n' %
+                      (strName, strData[0], strData[1], strData[2] + 2, color))
     else:
-        file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\n' %
-                  (strName, strData[0], strData[1], strData[2] + 2, color))
+        if extraTag:
+            file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\t\t%s\n' %
+                      (strName, strData[0], strData[1], strData[2] + 2, color, extraTag))
+        else:
+            file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\t\n' %
+                      (strName, strData[0], strData[1], strData[2] + 2, color))
     file.close()
 
 

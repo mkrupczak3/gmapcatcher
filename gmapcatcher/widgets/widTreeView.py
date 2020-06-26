@@ -15,17 +15,27 @@ class TreeView():
     def __read_file(self, strInfo, strFilePath, listStore):
         locations = fileUtils.read_file(strInfo, strFilePath)
         # add rows with text
-        if locations:
-            for strLoc in locations.keys():
-                listStore.append([strLoc, locations[strLoc][0],
-                                  locations[strLoc][1], locations[strLoc][2], locations[strLoc][3]])
+        if strInfo == "marker":
+            if locations:
+                for strLoc in locations.keys():
+                    listStore.append([strLoc, locations[strLoc][0],
+                                      locations[strLoc][1], locations[strLoc][2], locations[strLoc][3]])
+        else:
+            if locations:
+                for strLoc in locations.keys():
+                    listStore.append([strLoc, locations[strLoc][0],
+                                      locations[strLoc][1], locations[strLoc][2]])
         return listStore
 
     ## Writes a given list to the file
     def __write_file(self, strInfo, strFilePath, listStore):
         locations = {}
-        for row in listStore:
-            locations[row[0]] = (float(row[1]), float(row[2]), int(row[3]), int(row[4]))
+        if strInfo == "marker":
+            for row in listStore:
+                locations[row[0]] = (float(row[1]), float(row[2]), int(row[3]), int(row[4]))
+        else:
+            for row in listStore:
+                locations[row[0]] = (float(row[1]), float(row[2]), int(row[3]))
         fileUtils.write_file(strInfo, strFilePath, locations)
 
     ## Handle the 'edited' event of the cells
@@ -63,12 +73,19 @@ class TreeView():
         return strNewName
 
     ## Add a row to the list
-    def btn_add_clicked(self, button, listStore, myTree):
-        strName = self.check_name(' New', listStore)
-        listStore.set_sort_column_id(0, gtk.SORT_ASCENDING)
-        iter = listStore.append([strName, 0, 0, MAP_MAX_ZOOM_LEVEL - 2, MARKER_DEFAULT_COLOR])
-        listStore.set_sort_column_id(0, gtk.SORT_ASCENDING)
-        self.change_selection(myTree, listStore.get_path(iter))
+    def btn_add_clicked(self, button, listStore, myTree, strInfo):
+        if strInfo == "marker":
+            strName = self.check_name(' New', listStore)
+            listStore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+            iter = listStore.append([strName, 0, 0, MAP_MAX_ZOOM_LEVEL - 2, MARKER_DEFAULT_COLOR])
+            listStore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+            self.change_selection(myTree, listStore.get_path(iter))
+        else:
+            strName = self.check_name(' New', listStore)
+            listStore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+            iter = listStore.append([strName, 0, 0, MAP_MAX_ZOOM_LEVEL - 2])
+            listStore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+            self.change_selection(myTree, listStore.get_path(iter))
 
     ## Remove selected row from the list
     def btn_remove_clicked(self, button, listStore, myTree):
@@ -101,7 +118,7 @@ class TreeView():
         bbox.set_spacing(60)
 
         button = gtk.Button(stock=gtk.STOCK_ADD)
-        button.connect('clicked', self.btn_add_clicked, listStore, myTree)
+        button.connect('clicked', self.btn_add_clicked, listStore, myTree, strInfo)
         bbox.add(button)
 
         gtk.stock_add([(gtk.STOCK_REMOVE, "_Delete", 0, 0, "")])
@@ -137,14 +154,22 @@ class TreeView():
 
     ## Put all the TreeView Widgets together
     def show(self, strInfo, filePath, parent):
+
         # create a listStore with one string column to use as the model
-        listStore = gtk.ListStore(str, str, str, int, int)
+        listStore = None
+        strCols = None
+
+        if strInfo == "marker":
+            strCols = ['Description', 'Latitude', 'Longitude', 'Zoom', "Color"]
+            listStore = gtk.ListStore(str, str, str, int, int)
+        else:
+            strCols = ['Description', 'Latitude', 'Longitude', 'Zoom']
+            listStore = gtk.ListStore(str, str, str, int)
 
         # create the TreeView using listStore
         myTree = gtk.TreeView(self.__read_file(strInfo, filePath, listStore))
         myTree.connect("key-press-event", self.key_press_tree, listStore)
 
-        strCols = ['Description', 'Latitude', 'Longitude', 'Zoom', "Color"]
         for intPos in range(len(strCols)):
             # Create a CellRenderers to render the data
             cell = gtk.CellRendererText()

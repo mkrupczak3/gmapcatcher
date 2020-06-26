@@ -314,7 +314,6 @@ class DrawingArea(gtk.DrawingArea):
                 if self.update.isSet() or self.__stop.isSet():
                     break
                 mpos = self.marker.positions[string]
-                # TODO for each color marker draw
                 marker_image_index = self.marker.positions[string][3]
 
                 if (self.zl <= mpos[2]) and (mpos[0], mpos[1]) != (self.coord[0], self.coord[1]):
@@ -328,6 +327,5 @@ class DrawingArea(gtk.DrawingArea):
                             self.da.draw_marker(self.conf, mpos, self.zl, self.green, self.pixDim, string)
                         else:
                             self.da.draw_marker(self.conf, mpos, self.zl, self.red, self.pixDim, string)
-
                     finally:
                         gtk.threads_leave()
