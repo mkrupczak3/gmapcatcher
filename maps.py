@@ -41,6 +41,7 @@ from gmapcatcher.widgets.widStatusBar import StatusBar
 from gmapcatcher.xmlUtils import kml_to_markers
 from gmapcatcher.widgets.cordinateWindow import CordinateWindow
 from gmapcatcher.widgets.sk42calculator import Sk42Calculator
+from gmapcatcher.widgets.addMarker import AddMarker
 
 class MainWindow(gtk.Window):
     gps = None
@@ -592,10 +593,17 @@ class MainWindow(gtk.Window):
             clipboard.set_text("No GPS location detected.")
 
     ## Add a marker
-    def add_marker(self, pointer=None):
+    def add_marker_ok_button_handler(self, color, markerName, pointer=None):
         coord = self.pointer_to_world_coord(pointer)
-        self.marker.append_marker(coord)
+        if markerName == "":
+            markerName = None
+        self.marker.append_marker(coord, markerName, color)
         self.refresh()
+
+    def add_marker(self, pointer=None):
+        print self.add_marker_ok_button_handler
+        addMarkerWindow = AddMarker(self.add_marker_ok_button_handler, pointer)
+        addMarkerWindow.show()
 
     ## Show the bottom panel with the export
     def show_export(self, pointer=None):

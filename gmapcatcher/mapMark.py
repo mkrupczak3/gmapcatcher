@@ -21,10 +21,10 @@ class MyMarkers:
     def write_markers(self):
         fileUtils.write_file('marker', self.markerPath, self.positions)
 
-    def append_marker(self, coord, strName=None, extraTag=False):
+    def append_marker(self, coord, strName=None, color=0, extraTag=False):
         if strName is None:
             strName = str(coord[0]) + '_' + str(coord[1])
-        fileUtils.append_file('marker', self.markerPath, coord, strName, 0, extraTag)
+        fileUtils.append_file('marker', self.markerPath, coord, strName, color, extraTag)
 
     def __init__(self, configpath=None):
         localPath = os.path.expanduser(configpath or DEFAULT_PATH)
