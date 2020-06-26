@@ -52,4 +52,14 @@ class MyMarkers:
 
     def get_marker_pixbuf(self, zl, image='marker_s.png'):
         pixDim = self.get_pixDim(zl)
+
+        # TODO
+        # keys = self.positions.keys()
+        # for key in keys:
+        #     color = self.positions[key][3]
+        #
+        #     if color == 2 :
+        #         print "debug", color, image
+        #         image = 'marker_s_yellow.png'
+
         return mapPixbuf.getImage(image, pixDim, pixDim)

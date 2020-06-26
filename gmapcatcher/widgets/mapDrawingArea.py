@@ -293,7 +293,10 @@ class DrawingArea(gtk.DrawingArea):
             self.coord = coord
             self.conf = conf
             self.pixDim = pixDim
-            self.img = self.marker.get_marker_pixbuf(zl)
+            self.red = self.marker.get_marker_pixbuf(zl, image = "marker_s.png")
+            self.blue = self.marker.get_marker_pixbuf(zl, image = "marker_s_blue.png")
+            self.yellow = self.marker.get_marker_pixbuf(zl, image = "marker_s_yellow.png")
+            self.green = self.marker.get_marker_pixbuf(zl, image = "marker_s_green.png")
 
         def run(self):
             while not self.__stop.isSet():
@@ -307,12 +310,24 @@ class DrawingArea(gtk.DrawingArea):
 
         def draw_markers(self):
             for string in self.marker.positions.keys():
+
                 if self.update.isSet() or self.__stop.isSet():
                     break
                 mpos = self.marker.positions[string]
+                # TODO for each color marker draw
+                marker_image_index = self.marker.positions[string][3]
+
                 if (self.zl <= mpos[2]) and (mpos[0], mpos[1]) != (self.coord[0], self.coord[1]):
                     gtk.threads_enter()
                     try:
-                        self.da.draw_marker(self.conf, mpos, self.zl, self.img, self.pixDim, string)
+                        if  marker_image_index == MARKER_BLUE:
+                            self.da.draw_marker(self.conf, mpos, self.zl, self.blue, self.pixDim, string)
+                        elif marker_image_index == MARKER_YELLOW:
+                            self.da.draw_marker(self.conf, mpos, self.zl, self.yellow, self.pixDim, string)
+                        elif marker_image_index == MARKER_GREEN:
+                            self.da.draw_marker(self.conf, mpos, self.zl, self.green, self.pixDim, string)
+                        else:
+                            self.da.draw_marker(self.conf, mpos, self.zl, self.red, self.pixDim, string)
+
                     finally:
                         gtk.threads_leave()
