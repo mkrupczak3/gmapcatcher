@@ -7,6 +7,7 @@ pygtk.require('2.0')
 import gtk
 import numpy as np
 from WGS84_SK42_Translator import Translator as converter
+from pyproj import CRS, Transformer
 
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
@@ -16,18 +17,20 @@ class Sk42Calculator(gtk.Window):
     _sk42_lat = None
     _sk42_lon = None
     def __init__(self):
+        self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
+        # self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
         def _wgs84():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Latitude:"))
-            self.entry = myEntry("%.6g" % 50, 10, False)
+            self.entry = myEntry("%.9g" % 39.830474, 10, False)
             self._wgs84_Lat = self.entry
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Longitude:"))
-            self.entry = myEntry("%.6g" % 50, 10, False)
+            self.entry = myEntry("%.9g" % 46.74519, 10, False)
             self._wgs84_Lon = self.entry
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
@@ -60,11 +63,11 @@ class Sk42Calculator(gtk.Window):
 
         def btn_calculate_clicked(button):
             height = 900 
-            convertedLat = converter.WGS84_SK42_Lat(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()), height)
-            convertedLon = converter.WGS84_SK42_Long(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()), height)
+            convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()))
+            print convertedLat, convertedLon
 
-            self._sk42_lat.set_text(str("%.9g" % convertedLat))
-            self._sk42_lon.set_text(str("%.9g" % convertedLon))
+            self._sk42_lat.set_text(str("%.9g" % convertedLat)[1:])
+            self._sk42_lon.set_text(str("%.9g" % convertedLon)[1:])
 
             print "Click me clicked"
 
