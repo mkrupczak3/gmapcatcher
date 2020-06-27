@@ -109,17 +109,17 @@ def append_file(strInfo, filePath, strData, strName, color, extraTag=False):
     if strInfo == "marker":
         if extraTag:
             file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\t%s\n' %
-                      (strName, strData[0], strData[1], strData[2] + 2, color, extraTag))
+                      (strName, strData[0], strData[1], strData[2] + 10, color, extraTag))
         else:
             file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\tcolor="%i"\n' %
-                      (strName, strData[0], strData[1], strData[2] + 2, color))
+                      (strName, strData[0], strData[1], strData[2] + 10, color))
     else:
         if extraTag:
             file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\t\t%s\n' %
-                      (strName, strData[0], strData[1], strData[2] + 2, color, extraTag))
+                      (strName, strData[0], strData[1], strData[2] + 10, color, extraTag))
         else:
             file.write(strInfo + '="%s"\tlat="%s"\tlng="%s"\tzoom="%i"\t\n' %
-                      (strName, strData[0], strData[1], strData[2] + 2, color))
+                      (strName, strData[0], strData[1], strData[2] + 10, color))
     file.close()
 
 
