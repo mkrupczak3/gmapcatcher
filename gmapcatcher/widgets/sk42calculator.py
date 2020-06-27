@@ -64,12 +64,9 @@ class Sk42Calculator(gtk.Window):
         def btn_calculate_clicked(button):
             height = 900 
             convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()))
-            print convertedLat, convertedLon
 
-            self._sk42_lat.set_text(str("%.9g" % convertedLat)[1:])
-            self._sk42_lon.set_text(str("%.9g" % convertedLon)[1:])
-
-            print "Click me clicked"
+            self._sk42_lat.set_text(str("%.9g" % convertedLat)[2:7])
+            self._sk42_lon.set_text(str("%.9g" % convertedLon)[1:6])
 
         gtk.Window.__init__(self)
         hbox = gtk.HBox(False, 20)
@@ -82,4 +79,3 @@ class Sk42Calculator(gtk.Window):
         self.set_title("Sk42 Calculator")
         self.set_border_width(10)
         self.show_all()
-        print "debug"
