@@ -52,6 +52,7 @@ class MyMarkers:
 
     def get_marker_pixbuf(self, zl, image='marker_s.png'):
         pixDim = self.get_pixDim(zl)
+        return mapPixbuf.getImage(image, pixDim, pixDim)
 
         # TODO
         # keys = self.positions.keys()
@@ -62,4 +63,3 @@ class MyMarkers:
         #         print "debug", color, image
         #         image = 'marker_s_yellow.png'
 
-        return mapPixbuf.getImage(image, pixDim, pixDim)
