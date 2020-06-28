@@ -112,9 +112,10 @@ GPS_LOCATION = 10
 GPS_DIRECTIONS = 12
 CALC_AZIMUTH = 14
 SK42_CALC = 15
+EDIT_MARKER = 16
 DA_MENU = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "Batch Download", "Export Map", "Add Marker",
-        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Sk42 Calculator"]
+        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Sk42 Calculator", "Edit Marker"]
 DA_MENU_LIM = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "-", "-", "Add Marker", "-", "-", "-", "-", "-"]
 

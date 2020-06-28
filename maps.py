@@ -22,6 +22,7 @@ from gmapcatcher.mapConf import MapConf
 from gmapcatcher.mapConst import *
 from gmapcatcher.mapDownloader import MapDownloader
 from gmapcatcher.mapMark import MyMarkers
+from gmapcatcher.editMarker import EditMarker
 from gmapcatcher.mapServices import MapServ
 from gmapcatcher.mapUpdate import CheckForUpdates
 from gmapcatcher.mapUtils import openGPX
@@ -58,7 +59,8 @@ class MainWindow(gtk.Window):
     map_max_zoom = MAP_MAX_ZOOM_LEVEL - 1
     map_skip_zooms = []
 
-    LAST_TWO_CLICKED_MARKERS = []
+    last_two_clicked_markers = []
+    last_marker_right_clicked = None
     geod = pyproj.Geod(ellps='WGS84')
 
     ## Get the zoom level from the scale
@@ -546,30 +548,37 @@ class MainWindow(gtk.Window):
                 dialog.connect('response', lambda dialog, response: dialog.destroy())
                 dialog.show()
         elif strName == DA_MENU[CALC_AZIMUTH]:
-            if len(self.LAST_TWO_CLICKED_MARKERS) >= 2:
-                Lat0 = self.LAST_TWO_CLICKED_MARKERS[-1][0]
-                Lon0 = self.LAST_TWO_CLICKED_MARKERS[-1][1]
-                Lat1 = self.LAST_TWO_CLICKED_MARKERS[-2][0]
-                Lon1 = self.LAST_TWO_CLICKED_MARKERS[-2][1]
-                print(Lat0)
-                print(Lon0)
-                print(Lat1)
-                print(Lon1)
-                start_point = self.LAST_TWO_CLICKED_MARKERS[-2]
-                end_point = self.LAST_TWO_CLICKED_MARKERS[-1]
+            if len(self.last_two_clicked_markers) >= 2:
+                Lat0 = self.last_two_clicked_markers[-1][0]
+                Lon0 = self.last_two_clicked_markers[-1][1]
+                Lat1 = self.last_two_clicked_markers[-2][0]
+                Lon1 = self.last_two_clicked_markers[-2][1]
+                start_point = self.last_two_clicked_markers[-2]
+                end_point = self.last_two_clicked_markers[-1]
                 azimuth = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[0]
                 distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
                 if azimuth < 0:
                     azimuth += 360
-                print("distance=", distance)
-                print("azimuth=", azimuth)
                 crw = CordinateWindow(azimuth, distance, start_point, end_point)
                 crw.show()
         elif strName == DA_MENU[SK42_CALC]:
             sk42calc = Sk42Calculator()
             sk42calc.show()
-            pass
+        elif strName == DA_MENU[EDIT_MARKER]:
+            print self.last_marker_right_clicked
+            
+            editMarker = EditMarker()
+            store = gtk.ListStore(str, str, str, int, int)
+            listStore = editMarker.read_file("marker", self.conf.init_path + '/markers', store)
+            # listStore = editMarker.write_file("marker", self.conf.init_path + '/markers', listStore)
 
+            for row in listStore:
+                if row[0] == self.last_marker_right_clicked:
+                    print row[0], float(row[1]), float(row[2]), int(row[3]), int(row[4])
+                    listStore.append([row[0], str(float(row[1])+0.01),
+                                         row[2], row[3], row[4]])
+                    editMarker.write_file("marker", self.conf.init_path + '/markers', listStore)
+                    return
 
     ## utility function screen location of pointer to world coord
     def pointer_to_world_coord(self, pointer=None):
@@ -593,15 +602,19 @@ class MainWindow(gtk.Window):
             clipboard.set_text("No GPS location detected.")
 
     ## Add a marker
-    def add_marker_ok_button_handler(self, color, markerName, pointer=None):
-        coord = self.pointer_to_world_coord(pointer)
+    def add_marker_ok_button_handler(self, color, markerName, pointer=None, coordFromInput=None):
+        if coordFromInput == None:
+            coord = self.pointer_to_world_coord(pointer)
+        else:
+            coord = coordFromInput
+
         if markerName == "":
             markerName = None
         self.marker.append_marker(coord, markerName, color)
         self.refresh()
 
     def add_marker(self, pointer=None):
-        print self.add_marker_ok_button_handler
+        # passing add_marker_ok_button_handler to AddMarker, it will callback
         addMarkerWindow = AddMarker(self.add_marker_ok_button_handler, pointer)
         addMarkerWindow.show()
 
@@ -792,6 +805,7 @@ class MainWindow(gtk.Window):
                     closestMarkerName=str(sorted(markerDisp2_list)[0][1])
                     self.status_bar.text(closestMarkerName)
                 # ********************************** CALC_AZIMUTH patch ******************************************
+                markerDisp2_list = []
                 for markerName in self.marker.positions.keys():
                     # Calculate the angular displacement squared of the mouse coord to the marker coords
                     markerDisp2 = (self.marker.positions[markerName][0] - coord[0]) ** 2 + (
@@ -800,7 +814,7 @@ class MainWindow(gtk.Window):
                                                             self.marker.positions[markerName][1])))
                 if len(markerDisp2_list) > 0:
                     # self.status_bar.text("Nearest marker:    " + str(sorted(markerDisp2_list)[0][1]))
-                    self.LAST_TWO_CLICKED_MARKERS.append(sorted(markerDisp2_list)[0][1])
+                    self.last_two_clicked_markers.append(sorted(markerDisp2_list)[0][1])
 
             # Right-Click event shows the popUp menu
             elif event.button == 3 and not (event.state & gtk.gdk.CONTROL_MASK):
@@ -810,6 +824,19 @@ class MainWindow(gtk.Window):
                 else:
                     menu = self.ruler_popup()
                     menu.popup(None, None, None, event.button, event.time)
+
+                # getting last marker that is nearest to right click for Edit Marker menu
+                coord = self.pointer_to_world_coord((event.x, event.y))
+                markerDisp2_list = []
+                for markerName in self.marker.positions.keys():
+                    # Calculate the angular displacement squared of the mouse coord to the marker coords
+                    markerDisp2 = (self.marker.positions[markerName][0] - coord[0]) ** 2 + (
+                            self.marker.positions[markerName][1] - coord[1]) ** 2
+                    markerDisp2_list.append((markerDisp2, markerName))
+                if len(markerDisp2_list) > 0:
+                    # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
+                    self.last_marker_right_clicked = str(sorted(markerDisp2_list)[0][1])
+
             # If window hasn't been dragged, it's possible to add marker or ruler
             # if the window has been dragged, just ignore it...
             if abs(event.x - self.dragXY[0]) < 5 and abs(event.y - self.dragXY[1]) < 5:
