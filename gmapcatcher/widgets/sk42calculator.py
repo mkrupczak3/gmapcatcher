@@ -12,27 +12,22 @@ from pyproj import CRS, Transformer
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class Sk42Calculator(gtk.Window):
-    _wgs84_lat = None
-    _wgs84_Lon = None
-    _sk42_lat = None
-    _sk42_lon = None
     def __init__(self):
         self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
         # self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
+
         def _wgs84():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Latitude:"))
-            self.entry = myEntry("%.9g" % 39.830474, 10, False)
-            self._wgs84_Lat = self.entry
-            hbox.pack_start(self.entry, False)
+            self._wgs84_Lat = myEntry("%.9g" % 39.830474, 10, False)
+            hbox.pack_start(self._wgs84_Lat, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Longitude:"))
-            self.entry = myEntry("%.9g" % 46.74519, 10, False)
-            self._wgs84_Lon = self.entry
-            hbox.pack_start(self.entry, False)
+            self._wgs84_Lon = myEntry("%.9g" % 46.74519, 10, False)
+            hbox.pack_start(self._wgs84_Lon, False)
             vbox.pack_start(hbox)
             return myFrame(" Wgs84", vbox)
 
@@ -40,16 +35,14 @@ class Sk42Calculator(gtk.Window):
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Latitude:"))
-            self.entry = myEntry("%.6g" % 0, 10, False)
-            self._sk42_lat = self.entry
-            hbox.pack_start(self.entry, False)
+            self._sk42_lat = myEntry("%.6g" % 0, 10, False)
+            hbox.pack_start(self._sk42_lat, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Longitude:"))
-            self.entry = myEntry("%.6g" % 0, 10, False)
-            self._sk42_lon = self.entry
-            hbox.pack_start(self.entry, False)
+            self._sk42_lon = myEntry("%.6g" % 0, 10, False)
+            hbox.pack_start(self._sk42_lon, False)
             vbox.pack_start(hbox)
             return myFrame(" Sk42", vbox)
 

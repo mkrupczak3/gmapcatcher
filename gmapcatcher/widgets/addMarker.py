@@ -7,6 +7,8 @@ import gobject
 pygtk.require('2.0')
 import gtk
 from gmapcatcher.mapMark import MyMarkers
+import numpy as np
+from pyproj import Transformer
 
 
 from gmapcatcher.mapConst import *
@@ -14,7 +16,76 @@ from gmapcatcher.mapConst import *
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class AddMarker(gtk.Window):
+    # pointer is just passing values to handler
     def __init__(self, handler, pointer):
+        self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
+        self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
+        self.changer = True # if 0 then the changer is _wgs84_changed, if 1 then changer is _sk42_changed
+        self.useInputCordinates = False
+
+        def _wgs84_activated(garbage, garbage_):
+            self.changer = True
+
+        def _sk42_activated(garbage, garbage_):
+            self.changer = False
+
+        def _wg84_changed(garbage):
+            if self.changer == True:
+                convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()))
+                self._sk42_Lat.set_text(str("%.9g" % convertedLat)[2:7])
+                self._sk42_Lon.set_text(str("%.9g" % convertedLon)[1:6])
+
+        def _sk42_changed(garbage):
+            if self.changer == False:
+                convertedLat, convertedLon = self.transformer_sk42_wgs.transform(np.float64("44" + self._sk42_Lat.get_text()), np.float64("6" + self._sk42_Lon.get_text()))
+                self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
+                self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
+
+        def _wgs84():
+            vbox = gtk.VBox(False, 5)
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("Latitude:"))
+            self._wgs84_Lat = myEntry("%.9g" % 39.830474, 10, False)
+            hbox.pack_start(self._wgs84_Lat, False)
+            vbox.pack_start(hbox)
+
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("Longitude:"))
+            self._wgs84_Lon = myEntry("%.9g" % 46.74519, 10, False)
+            hbox.pack_start(self._wgs84_Lon, False)
+            vbox.pack_start(hbox)
+
+            self._wgs84_Lon.connect("changed", _wg84_changed)
+            self._wgs84_Lat.connect("changed", _wg84_changed)
+
+            self._wgs84_Lon.connect("focus_in_event", _wgs84_activated)
+            self._wgs84_Lat.connect("focus_in_event", _wgs84_activated)
+            return myFrame(" Wgs84", vbox)
+
+        def _sk42():
+            vbox = gtk.VBox(False, 5)
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("Latitude:"))
+            self._sk42_Lat = myEntry("%.6g" % 0, 10, False)
+            hbox.pack_start(self._sk42_Lat, False)
+            vbox.pack_start(hbox)
+
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("Longitude:"))
+            self._sk42_Lon = myEntry("%.6g" % 0, 10, False)
+            hbox.pack_start(self._sk42_Lon, False)
+            vbox.pack_start(hbox)
+
+            self._sk42_Lon.connect("changed", _sk42_changed)
+            self._sk42_Lat.connect("changed", _sk42_changed)
+
+            self._sk42_Lon.connect("focus_in_event", _sk42_activated)
+            self._sk42_Lat.connect("focus_in_event", _sk42_activated)
+
+            # update sk42 just to get right values, otherwise it will be 0
+            _wg84_changed(None)
+            return myFrame(" Sk42", vbox)
+
         def _markerName():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
@@ -61,6 +132,20 @@ class AddMarker(gtk.Window):
 
             return myFrame(" Color", vbox)
 
+        def use_input_cordinate_checkbox():
+            hbox = gtk.HBox(False, 10)
+            checkBox = gtk.CheckButton() 
+            hbox.pack_start(checkBox)
+            checkBox.connect("toggled", use_input_cordinate_checkbox_changed) 
+            checkBox.set_label("From Input ?")
+            return hbox
+
+        def use_input_cordinate_checkbox_changed(garbage):
+            if self.useInputCordinates:
+                self.useInputCordinates = False
+            else:
+                self.useInputCordinates = True
+
         def btn_ok():
             button = gtk.Button(stock=gtk.STOCK_OK)
             button.connect("clicked", btn_ok_clicked)
@@ -68,21 +153,30 @@ class AddMarker(gtk.Window):
             hbox.pack_start(button)
             hbox.set_layout(gtk.BUTTONBOX_SPREAD)
             return hbox
-
+        
         def btn_ok_clicked(button):
             color = self._marker_color.get_active()
-            handler(color,
-                        str(self._marker_name.get_text()),
-                        pointer)
+            if self.useInputCordinates == True:
+                handler(color,
+                            str(self._marker_name.get_text()),
+                            pointer,
+                            (float(self._wgs84_Lat.get_text()), float(self._wgs84_Lon.get_text()), 1))
+            else:
+                handler(color,
+                            str(self._marker_name.get_text()),
+                            pointer)
             self.destroy()
 
         gtk.Window.__init__(self)
         hbox = gtk.HBox(False, 20)
         vbox = gtk.VBox(False, 5)
-        hbox.pack_start(btn_ok())
-        vbox.pack_start(hbox)
         vbox.pack_start(_color_debug())
         vbox.pack_start(_markerName())
+        vbox.pack_start(_wgs84())
+        vbox.pack_start(_sk42())
+        vbox.pack_start(use_input_cordinate_checkbox())
+        hbox.pack_start(btn_ok())
+        vbox.pack_start(hbox)
         self.add(vbox)
         self.set_title("Add New Marker")
         self.set_border_width(10)

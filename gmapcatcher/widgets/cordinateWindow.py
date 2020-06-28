@@ -7,7 +7,7 @@ pygtk.require('2.0')
 import gtk
 import numpy as np
 from WGS84_SK42_Translator import Translator as converter
-from pyproj import CRS, Transformer
+from pyproj import Transformer
 
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
