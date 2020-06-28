@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 ## @package gmapcatcher.widgets.widTreeView
-# TreeView widget used to display the list of the locations.
-# Displayed inside a tab in MapTools.
+# EditMarker class provides read write file functionality, which has been coppied from widTreeView.py file
 
 import gtk
 import gmapcatcher.fileUtils as fileUtils
@@ -30,7 +29,6 @@ class EditMarker():
         if strInfo == "marker":
             for row in listStore:
                 locations[row[0]] = (float(row[1]), float(row[2]), int(row[3]), int(row[4]))
-                print locations
         else:
             for row in listStore:
                 locations[row[0]] = (float(row[1]), float(row[2]), int(row[3]))

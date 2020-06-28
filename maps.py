@@ -61,6 +61,9 @@ class MainWindow(gtk.Window):
 
     last_two_clicked_markers = []
     last_marker_right_clicked = None
+    # this boolean check if edit marker menu has been clicked, from right clicked drop down menu
+    edit_marker_pressed = False
+
     geod = pyproj.Geod(ellps='WGS84')
 
     ## Get the zoom level from the scale
@@ -565,20 +568,22 @@ class MainWindow(gtk.Window):
             sk42calc = Sk42Calculator()
             sk42calc.show()
         elif strName == DA_MENU[EDIT_MARKER]:
-            print self.last_marker_right_clicked
-            
-            editMarker = EditMarker()
-            store = gtk.ListStore(str, str, str, int, int)
-            listStore = editMarker.read_file("marker", self.conf.init_path + '/markers', store)
-            # listStore = editMarker.write_file("marker", self.conf.init_path + '/markers', listStore)
+            self.edit_marker_pressed = True
 
-            for row in listStore:
-                if row[0] == self.last_marker_right_clicked:
-                    print row[0], float(row[1]), float(row[2]), int(row[3]), int(row[4])
-                    listStore.append([row[0], str(float(row[1])+0.01),
-                                         row[2], row[3], row[4]])
-                    editMarker.write_file("marker", self.conf.init_path + '/markers', listStore)
-                    return
+    # This function is called when Edit Marker has been called 
+    # from right click drop down menu then right clicked on the map
+    def __edit_marker_position(self, coord):
+        editMarker = EditMarker()
+        store = gtk.ListStore(str, str, str, int, int)
+        listStore = editMarker.read_file("marker", self.conf.init_path + '/markers', store)
+
+        for row in listStore:
+            if row[0] == self.last_marker_right_clicked:
+                listStore.append([row[0], coord[0],
+                                     coord[1], row[3], row[4]])
+                editMarker.write_file("marker", self.conf.init_path + '/markers', listStore)
+                self.refresh()
+                return
 
     ## utility function screen location of pointer to world coord
     def pointer_to_world_coord(self, pointer=None):
@@ -789,6 +794,13 @@ class MainWindow(gtk.Window):
         if event.type == gtk.gdk.BUTTON_PRESS:
             self.dragXY = (event.x, event.y)
         elif event.type == gtk.gdk.BUTTON_RELEASE:
+            # Check if left-clicked, and Edit Marker menu has been selected
+            # In that case move the marker to desired position
+            if event.button == 1 and self.edit_marker_pressed:
+                self.edit_marker_pressed = False
+                coord = self.pointer_to_world_coord((event.x, event.y))
+                self.__edit_marker_position(coord)
+                
             # Find nearest marker...
             # Check if left-clicked, mouse status bar is on, is not in ruler mode and map not dragged
             if event.button == 1 and self.conf.statusbar_type == STATUS_MOUSE and not self.Ruler \
