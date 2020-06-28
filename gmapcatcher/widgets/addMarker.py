@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-## @package gmapcatcher.widgets.EXWindow
-# Widget that allows Export of entire locations to new tiles repository
+## @package gmapcatcher.widgets.addMarker
+# Widget allows adding marker on the fly from right click menu
 
 import pygtk
 import gobject
@@ -20,7 +20,7 @@ class AddMarker(gtk.Window):
     def __init__(self, handler, pointer):
         self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
         self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
-        self.changer = True # if 0 then the changer is _wgs84_changed, if 1 then changer is _sk42_changed
+        self.changer = True # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
         self.useInputCordinates = False
 
         def _wgs84_activated(garbage, garbage_):
@@ -45,13 +45,13 @@ class AddMarker(gtk.Window):
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Latitude:"))
-            self._wgs84_Lat = myEntry("%.9g" % 39.830474, 10, False)
+            self._wgs84_Lat = myEntry("%.9g" % 39.930474, 10, False)
             hbox.pack_start(self._wgs84_Lat, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Longitude:"))
-            self._wgs84_Lon = myEntry("%.9g" % 46.74519, 10, False)
+            self._wgs84_Lon = myEntry("%.9g" % 46.84519, 10, False)
             hbox.pack_start(self._wgs84_Lon, False)
             vbox.pack_start(hbox)
 
@@ -148,13 +148,13 @@ class AddMarker(gtk.Window):
 
         def btn_ok():
             button = gtk.Button(stock=gtk.STOCK_OK)
-            button.connect("clicked", btn_ok_clicked)
+            button.connect("clicked", btn_ok_cb)
             hbox = gtk.HButtonBox()
             hbox.pack_start(button)
             hbox.set_layout(gtk.BUTTONBOX_SPREAD)
             return hbox
         
-        def btn_ok_clicked(button):
+        def btn_ok_cb(button):
             color = self._marker_color.get_active()
             if self.useInputCordinates == True:
                 handler(color,
@@ -168,6 +168,7 @@ class AddMarker(gtk.Window):
             self.destroy()
 
         gtk.Window.__init__(self)
+
         hbox = gtk.HBox(False, 20)
         vbox = gtk.VBox(False, 5)
         vbox.pack_start(_color_debug())
@@ -177,6 +178,7 @@ class AddMarker(gtk.Window):
         vbox.pack_start(use_input_cordinate_checkbox())
         hbox.pack_start(btn_ok())
         vbox.pack_start(hbox)
+
         self.add(vbox)
         self.set_title("Add New Marker")
         self.set_border_width(10)

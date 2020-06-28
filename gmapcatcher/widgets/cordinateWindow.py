@@ -15,7 +15,7 @@ class CordinateWindow(gtk.Window):
     def __init__(self, azimuth, distance, start_point, end_point):
         azimuth_hbox = gtk.HBox(False, 20)
         sk42_hbox = gtk.HBox(False, 20)
-        sk42_hbox_zone = gtk.HBox(False, 20)
+        sk42_hbox_full = gtk.HBox(False, 20)
 
         self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
         self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
@@ -77,20 +77,20 @@ class CordinateWindow(gtk.Window):
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("latitude:"))
+            hbox.pack_start(lbl("X:"))
             self.entry = myEntry(str("%.9f" % convertedLat)[2:7], 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("longitude:"))
+            hbox.pack_start(lbl("Y:"))
             self.entry = myEntry(str("%.9f" % convertedLon)[1:6], 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             return myFrame("SK42 start point EPSG:28468 XY", vbox)
 
-        def _wgs_to_sk42_end_point_zone():
+        def _wgs_to_sk42_end_full():
             height = 900 
             # convertedLat = converter.WGS84_SK42_Lat(end_point[0],end_point[1],height)
             # convertedLon = converter.WGS84_SK42_Long(end_point[0],end_point[1],height)
@@ -98,20 +98,20 @@ class CordinateWindow(gtk.Window):
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("latitude:"))
+            hbox.pack_start(lbl("X:"))
             self.entry = myEntry(str("%.9f" % convertedLat), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("longitude:"))
+            hbox.pack_start(lbl("Y:"))
             self.entry = myEntry(str("%.9f" % convertedLon), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             return myFrame("SK42 full EPSG:28468", vbox)
 
-        def _wgs_to_sk42_start_point_zone():
+        def _wgs_to_sk42_start_full():
             height = 900 
             # convertedLat = converter.WGS84_SK42_Lat(np.float64(start_point[0]),np.float64(start_point[1]),height)
             # convertedLon = converter.WGS84_SK42_Long(np.float64(start_point[0]),np.float64(start_point[1]),height)
@@ -165,13 +165,13 @@ class CordinateWindow(gtk.Window):
         sk42_hbox.pack_start(_wgs_to_sk42_start_point())
         sk42_hbox.pack_start(_wgs_to_sk42_end_point())
 
-        sk42_hbox_zone.pack_start(_wgs_to_sk42_start_point_zone())
-        sk42_hbox_zone.pack_start(_wgs_to_sk42_end_point_zone())
+        sk42_hbox_full.pack_start(_wgs_to_sk42_start_full())
+        sk42_hbox_full.pack_start(_wgs_to_sk42_end_full())
 
         vbox.pack_start(hbox)
         vbox.pack_start(azimuth_hbox)
         vbox.pack_start(sk42_hbox)
-        vbox.pack_start(sk42_hbox_zone)
+        vbox.pack_start(sk42_hbox_full)
         self.add(vbox)
         self.set_title("Azimuth and Distance Calculator")
         self.set_border_width(10)
