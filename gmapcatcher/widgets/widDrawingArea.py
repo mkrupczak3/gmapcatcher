@@ -23,7 +23,7 @@ class DrawingArea(mapDrawingArea.DrawingArea):
         self.connect('button-release-event', self.da_button_release)
 
     ## Change the mouse cursor over the drawing_area
-    def da_set_cursor(self, dCursor=gtk.gdk.HAND1):
+    def da_set_cursor(self, dCursor=gtk.gdk.ARROW):
         cursor = gtk.gdk.Cursor(dCursor)
         self.window.set_cursor(cursor)
         self.isPencil = (dCursor == gtk.gdk.PENCIL)

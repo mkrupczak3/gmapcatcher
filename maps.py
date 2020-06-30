@@ -569,6 +569,7 @@ class MainWindow(gtk.Window):
             sk42calc.show()
         elif strName == DA_MENU[EDIT_MARKER]:
             self.edit_marker_pressed = True
+            self.drawing_area.da_set_cursor(gtk.gdk.CROSS)
 
     # This function is called when Edit Marker has been called 
     # from right click drop down menu then right clicked on the map
@@ -798,6 +799,7 @@ class MainWindow(gtk.Window):
             # In that case move the marker to desired position
             if event.button == 1 and self.edit_marker_pressed:
                 self.edit_marker_pressed = False
+                self.drawing_area.da_set_cursor()
                 coord = self.pointer_to_world_coord((event.x, event.y))
                 self.__edit_marker_position(coord)
                 
@@ -871,12 +873,29 @@ class MainWindow(gtk.Window):
 
     ## Handles the mouse motion over the drawing_area
     def da_motion(self, w, event):
+        # self.drawing_area.draw_circle([event.x, event.y], gtk.gdk.HAND1)
         if event.state & gtk.gdk.BUTTON1_MASK:
             self.gps_idle_time = time.time()
             self.drawing_area.da_move(event.x, event.y, self.get_zoom())
             if event.state & gtk.gdk.SHIFT_MASK:
                 self.visual_download()
             self.update_export()
+        else:
+            if self.edit_marker_pressed == False:
+                # getting last marker that is nearest to right click for Edit Marker menu
+                coord = self.pointer_to_world_coord((event.x, event.y))
+                markerDisp2_list = []
+                for markerName in self.marker.positions.keys():
+                    # Calculate the angular displacement squared of the mouse coord to the marker coords
+                    markerDisp2 = (self.marker.positions[markerName][0] - coord[0]) ** 2 + (
+                            self.marker.positions[markerName][1] - coord[1]) ** 2
+                    markerDisp2_list.append((markerDisp2, markerName))
+                if len(markerDisp2_list) > 0:
+                    # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
+                    if sorted(markerDisp2_list)[0][0] * 1000000 < 10:
+                        self.drawing_area.da_set_cursor(gtk.gdk.HAND2)
+                    else:
+                        self.drawing_area.da_set_cursor()
 
         if self.conf.statusbar_type == STATUS_MOUSE and not self.Ruler:
             coord = self.pointer_to_world_coord((event.x, event.y))
