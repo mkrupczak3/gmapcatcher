@@ -7,14 +7,16 @@ pygtk.require('2.0')
 import gtk
 import numpy as np
 from WGS84_SK42_Translator import Translator as converter
-from pyproj import CRS, Transformer
+import pyproj
 
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class Sk42Calculator(gtk.Window):
     def __init__(self):
-        self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
-        self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
+        self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
+        self.proj_sk42 = pyproj.Proj(init="epsg:28468")
+        # lon, lat = pyproj.transform(pyproj.Proj(self.proj_wgs84, self.proj_sk42 , Lon, Lat)
+
         self.changer = [True, False, False] # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
         self.useInputCordinates = False
 
@@ -29,7 +31,7 @@ class Sk42Calculator(gtk.Window):
 
         def _wg84_changed(garbage):
             if self.changer == [1,0,0]:
-                convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
                 self._sk42_Lat.set_text(str("%.9g" % convertedLat)[2:7])
                 self._sk42_Lon.set_text(str("%.9g" % convertedLon)[1:6])
                 self._sk42_Lat_full.set_text(str("%.9g" % convertedLat))
@@ -37,16 +39,16 @@ class Sk42Calculator(gtk.Window):
 
         def _sk42_changed(garbage):
             if self.changer == [0,1,0]:
-                convertedLat, convertedLon = self.transformer_sk42_wgs.transform(np.float64("44" + self._sk42_Lat.get_text()), np.float64("6" + self._sk42_Lon.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64("6" + self._sk42_Lon.get_text()), np.float64("44" + self._sk42_Lat.get_text()))
                 self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
                 self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
 
-                convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
                 self._sk42_Lat_full.set_text(str("%.9g" % convertedLat))
                 self._sk42_Lon_full.set_text(str("%.9g" % convertedLon))
         def _sk42_full_changed(garbage):
             if self.changer == [0,0,1]:
-                convertedLat, convertedLon = self.transformer_sk42_wgs.transform(np.float64(self._sk42_Lat_full.get_text()), np.float64(self._sk42_Lon_full.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64(self._sk42_Lon_full.get_text()), np.float64(self._sk42_Lat_full.get_text()))
                 self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
                 self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
                 self._sk42_Lat.set_text(self._sk42_Lat_full.get_text()[2:7])

@@ -7,18 +7,20 @@ pygtk.require('2.0')
 import gtk
 import numpy as np
 from WGS84_SK42_Translator import Translator as converter
-from pyproj import Transformer
+import pyproj
 
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class CordinateWindow(gtk.Window):
     def __init__(self, azimuth, distance, start_point, end_point):
+        self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
+        self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         azimuth_hbox = gtk.HBox(False, 20)
         sk42_hbox = gtk.HBox(False, 20)
         sk42_hbox_full = gtk.HBox(False, 20)
 
-        self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
-        self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
+        self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
+        self.proj_sk42 = pyproj.Proj(init="epsg:28468")
 
         def _area():
             vbox = gtk.VBox(False, 5)
@@ -73,8 +75,7 @@ class CordinateWindow(gtk.Window):
             height = 900 
             # convertedLat = converter.WGS84_SK42_Lat(np.float64(start_point[0]),np.float64(start_point[1]),height)
             # convertedLon = converter.WGS84_SK42_Long(np.float64(start_point[0]),np.float64(start_point[1]),height)
-            convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(start_point[0]), np.float64(start_point[1]))
-
+            convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(start_point[1]), np.float64(start_point[0]))
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("X:"))
@@ -94,7 +95,7 @@ class CordinateWindow(gtk.Window):
             height = 900 
             # convertedLat = converter.WGS84_SK42_Lat(end_point[0],end_point[1],height)
             # convertedLon = converter.WGS84_SK42_Long(end_point[0],end_point[1],height)
-            convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(end_point[0]), np.float64(end_point[1]))
+            convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(end_point[1]), np.float64(end_point[0]))
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
@@ -115,7 +116,7 @@ class CordinateWindow(gtk.Window):
             height = 900 
             # convertedLat = converter.WGS84_SK42_Lat(np.float64(start_point[0]),np.float64(start_point[1]),height)
             # convertedLon = converter.WGS84_SK42_Long(np.float64(start_point[0]),np.float64(start_point[1]),height)
-            convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(start_point[0]), np.float64(start_point[1]))
+            convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(start_point[1]), np.float64(start_point[0]))
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
@@ -136,7 +137,7 @@ class CordinateWindow(gtk.Window):
             height = 900 
             # convertedLat = converter.WGS84_SK42_Lat(end_point[0],end_point[1],height)
             # convertedLon = converter.WGS84_SK42_Long(end_point[0],end_point[1],height)
-            convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(end_point[0]), np.float64(end_point[1]))
+            convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(end_point[1]), np.float64(end_point[0]))
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)

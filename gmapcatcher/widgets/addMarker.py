@@ -8,7 +8,7 @@ pygtk.require('2.0')
 import gtk
 from gmapcatcher.mapMark import MyMarkers
 import numpy as np
-from pyproj import Transformer
+import pyproj
 
 
 from gmapcatcher.mapConst import *
@@ -18,8 +18,8 @@ from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 class AddMarker(gtk.Window):
     # pointer is just passing values to handler
     def __init__(self, handler, pointer):
-        self.transformer_wgs_sk42 = Transformer.from_crs("EPSG:4284", "EPSG:28468")
-        self.transformer_sk42_wgs = Transformer.from_crs("EPSG:28468", "EPSG:4284")
+        self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
+        self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         self.changer = True # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
         self.useInputCordinates = False
 
@@ -31,13 +31,13 @@ class AddMarker(gtk.Window):
 
         def _wg84_changed(garbage):
             if self.changer == True:
-                convertedLat, convertedLon = self.transformer_wgs_sk42.transform(np.float64(self._wgs84_Lat.get_text()), np.float64(self._wgs84_Lon.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
                 self._sk42_Lat.set_text(str("%.9g" % convertedLat)[2:7])
                 self._sk42_Lon.set_text(str("%.9g" % convertedLon)[1:6])
 
         def _sk42_changed(garbage):
             if self.changer == False:
-                convertedLat, convertedLon = self.transformer_sk42_wgs.transform(np.float64("44" + self._sk42_Lat.get_text()), np.float64("6" + self._sk42_Lon.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64("6" + self._sk42_Lon.get_text()), np.float64("44" + self._sk42_Lat.get_text()))
                 self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
                 self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
 
