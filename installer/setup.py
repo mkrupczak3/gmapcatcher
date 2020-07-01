@@ -5,6 +5,12 @@
 from distutils.core import setup
 from gmapcatcher.mapConst import *
 import os
+import pyproj
+import sys
+from glob import glob
+
+pyProjData = pyproj.pyproj_datadir
+sys.path.append( pyProjData)  # not sure if this is necessary, but it is needed for msvcr90.dll
 
 if os.name == "posix":
     ico = "images/map.png"
@@ -69,5 +75,6 @@ else:
                 'dll_excludes': DLL_EXCLUDES,
             }
         },
-        data_files = [ "README.md", "changelog.md" ]
+        data_files = [ "README.md", "changelog.md",
+		( "pyproj", glob( os.path.join( pyProjData, "*" )))]
     )

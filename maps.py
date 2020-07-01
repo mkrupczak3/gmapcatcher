@@ -43,7 +43,24 @@ from gmapcatcher.xmlUtils import kml_to_markers
 from gmapcatcher.widgets.cordinateWindow import CordinateWindow
 from gmapcatcher.widgets.sk42calculator import Sk42Calculator
 from gmapcatcher.widgets.addMarker import AddMarker
+import pyproj
 
+import imp, os, sys
+
+def main_is_frozen():
+   return (hasattr(sys, "frozen") or # new py2exe
+           hasattr(sys, "importers") # old py2exe
+           or imp.is_frozen("__main__")) # tools/freeze
+
+def get_main_dir():
+   if main_is_frozen():
+       return os.path.dirname(sys.executable)
+   return os.path.dirname(sys.argv[0])
+
+mainDir = get_main_dir()
+
+if main_is_frozen():
+    pyproj.set_datapath(os.path.join( mainDir, "pyproj"))
 class MainWindow(gtk.Window):
     gps = None
     update = None
