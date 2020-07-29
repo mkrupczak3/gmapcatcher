@@ -17,35 +17,27 @@ class Sk42Calculator(gtk.Window):
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         # lon, lat = pyproj.transform(pyproj.Proj(self.proj_wgs84, self.proj_sk42 , Lon, Lat)
 
-        self.changer = [True, False, False] # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
+        self.changer = [False, False, False] # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
         self.useInputCordinates = False
 
         def _wgs84_activated(garbage, garbage_):
             self.changer = [1,0,0]
 
-        def _sk42_activated(garbage, garbage_):
-            self.changer = [0,1,0]
+        # def _sk42_activated(garbage, garbage_):
+        #     self.changer = [0,1,0]
 
         def _sk42_full_activated(garbage, garbage_):
             self.changer = [0,0,1]
 
         def _wg84_changed(garbage):
             if self.changer == [1,0,0]:
+                print self._wgs84_Lon.get_text()
                 convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
                 self._sk42_Lat.set_text(str("%.9g" % convertedLat)[2:7])
                 self._sk42_Lon.set_text(str("%.9g" % convertedLon)[1:6])
                 self._sk42_Lat_full.set_text(str("%.9g" % convertedLat))
                 self._sk42_Lon_full.set_text(str("%.9g" % convertedLon))
 
-        def _sk42_changed(garbage):
-            if self.changer == [0,1,0]:
-                convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64("6" + self._sk42_Lon.get_text()), np.float64("44" + self._sk42_Lat.get_text()))
-                self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
-                self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
-
-                convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
-                self._sk42_Lat_full.set_text(str("%.9g" % convertedLat))
-                self._sk42_Lon_full.set_text(str("%.9g" % convertedLon))
         def _sk42_full_changed(garbage):
             if self.changer == [0,0,1]:
                 convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64(self._sk42_Lon_full.get_text()), np.float64(self._sk42_Lat_full.get_text()))
@@ -75,27 +67,6 @@ class Sk42Calculator(gtk.Window):
             self._wgs84_Lat.connect("focus_in_event", _wgs84_activated)
             return myFrame(" Wgs84", vbox)
 
-        def _sk42():
-            vbox = gtk.VBox(False, 5)
-            hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("X:"))
-            self._sk42_Lat = myEntry("%.6g" % 0, 10, False)
-            hbox.pack_start(self._sk42_Lat, False)
-            vbox.pack_start(hbox)
-
-            hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("Y:"))
-            self._sk42_Lon = myEntry("%.6g" % 0, 10, False)
-            hbox.pack_start(self._sk42_Lon, False)
-            vbox.pack_start(hbox)
-
-            self._sk42_Lon.connect("changed", _sk42_changed)
-            self._sk42_Lat.connect("changed", _sk42_changed)
-
-            self._sk42_Lon.connect("focus_in_event", _sk42_activated)
-            self._sk42_Lat.connect("focus_in_event", _sk42_activated)
-
-            return myFrame(" Sk42", vbox)
 
         def _sk42_full():
             vbox = gtk.VBox(False, 5)
@@ -141,7 +112,6 @@ class Sk42Calculator(gtk.Window):
         # hbox.pack_start(btn_calculate())
         vbox.pack_start(hbox)
         vbox.pack_start(_wgs84())
-        vbox.pack_start(_sk42())
         vbox.pack_start(_sk42_full())
 
         self.add(vbox)
