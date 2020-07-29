@@ -33,8 +33,6 @@ class Sk42Calculator(gtk.Window):
             if self.changer == [1,0,0]:
                 print self._wgs84_Lon.get_text()
                 convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
-                self._sk42_Lat.set_text(str("%.9g" % convertedLat)[2:7])
-                self._sk42_Lon.set_text(str("%.9g" % convertedLon)[1:6])
                 self._sk42_Lat_full.set_text(str("%.9g" % convertedLat))
                 self._sk42_Lon_full.set_text(str("%.9g" % convertedLon))
 
@@ -43,8 +41,6 @@ class Sk42Calculator(gtk.Window):
                 convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64(self._sk42_Lon_full.get_text()), np.float64(self._sk42_Lat_full.get_text()))
                 self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
                 self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
-                self._sk42_Lat.set_text(self._sk42_Lat_full.get_text()[2:7])
-                self._sk42_Lon.set_text(self._sk42_Lon_full.get_text()[1:6])
 
         def _wgs84():
             vbox = gtk.VBox(False, 5)

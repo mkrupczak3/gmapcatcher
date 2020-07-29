@@ -32,12 +32,12 @@ class AddMarker(gtk.Window):
         def _wg84_changed(garbage):
             if self.changer == True:
                 convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
-                self._sk42_Lat.set_text(str("%.9g" % convertedLat)[2:7])
-                self._sk42_Lon.set_text(str("%.9g" % convertedLon)[1:6])
+                self._sk42_Lat.set_text(str("%.9g" % convertedLat))
+                self._sk42_Lon.set_text(str("%.9g" % convertedLon))
 
         def _sk42_changed(garbage):
             if self.changer == False:
-                convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64("6" + self._sk42_Lon.get_text()), np.float64("44" + self._sk42_Lat.get_text()))
+                convertedLon, convertedLat = pyproj.transform(self.proj_sk42, self.proj_wgs84 , np.float64(self._sk42_Lon.get_text()), np.float64(self._sk42_Lat.get_text()))
                 self._wgs84_Lat.set_text(str("%.9g" % convertedLat))
                 self._wgs84_Lon.set_text(str("%.9g" % convertedLon))
 
