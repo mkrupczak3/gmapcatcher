@@ -809,9 +809,12 @@ class MainWindow(gtk.Window):
     def da_click_events(self, w, event):
         ## Single click event
         # On button press, set the coordinates
-        print event
         if event.type == gtk.gdk.BUTTON_PRESS:
             self.dragXY = (event.x, event.y)
+            # exit from edit marker menu when dragging
+            self.edit_marker_pressed = False
+            self.drawing_area.da_set_cursor()
+
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             # Check if left-clicked, and Edit Marker menu has been selected
             # In that case move the marker to desired position
