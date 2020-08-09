@@ -809,6 +809,7 @@ class MainWindow(gtk.Window):
     def da_click_events(self, w, event):
         ## Single click event
         # On button press, set the coordinates
+        print event
         if event.type == gtk.gdk.BUTTON_PRESS:
             self.dragXY = (event.x, event.y)
         elif event.type == gtk.gdk.BUTTON_RELEASE:
@@ -819,9 +820,14 @@ class MainWindow(gtk.Window):
                 self.drawing_area.da_set_cursor()
                 coord = self.pointer_to_world_coord((event.x, event.y))
                 self.__edit_marker_position(coord)
+
+            # exit edit marker menu with right click
+            if event.button ==3 and self.edit_marker_pressed:
+                self.edit_marker_pressed = False
+                self.drawing_area.da_set_cursor()
                 
             # Find nearest marker...
-            # Check if left-clicked, mouse status bar is on, is not in ruler mode and map not dragged
+            # Check if left-clicked to edit marker position, mouse status bar is on, is not in ruler mode and map not dragged
             if event.button == 1 and self.conf.statusbar_type == STATUS_MOUSE and not self.Ruler \
                     and abs(event.x - self.dragXY[0]) < 5 and abs(event.y - self.dragXY[1]) < 5:
                 coord = self.pointer_to_world_coord((event.x, event.y))
