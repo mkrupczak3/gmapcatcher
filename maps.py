@@ -80,6 +80,8 @@ class MainWindow(gtk.Window):
     last_marker_right_clicked = None
     # this boolean check if edit marker menu has been clicked, from right clicked drop down menu
     edit_marker_pressed = False
+    previous_mouse_drag_x = 0.0
+    previous_mouse_drag_y = 0.0
 
     geod = pyproj.Geod(ellps='WGS84')
 
@@ -811,9 +813,6 @@ class MainWindow(gtk.Window):
         # On button press, set the coordinates
         if event.type == gtk.gdk.BUTTON_PRESS:
             self.dragXY = (event.x, event.y)
-            # exit from edit marker menu when dragging
-            self.edit_marker_pressed = False
-            self.drawing_area.da_set_cursor()
 
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             # Check if left-clicked, and Edit Marker menu has been selected
@@ -897,6 +896,7 @@ class MainWindow(gtk.Window):
             else:
                 self.do_zoom(zl - 1, zl, True, (event.x, event.y))
 
+
     ## Handles the mouse motion over the drawing_area
     def da_motion(self, w, event):
         # self.drawing_area.draw_circle([event.x, event.y], gtk.gdk.HAND1)
@@ -906,6 +906,9 @@ class MainWindow(gtk.Window):
             if event.state & gtk.gdk.SHIFT_MASK:
                 self.visual_download()
             self.update_export()
+            # exit edit marker mode when dragged
+            self.edit_marker_pressed = False
+            self.drawing_area.da_set_cursor()
         else:
             if self.edit_marker_pressed == False:
                 # getting last marker that is nearest to right click for Edit Marker menu
@@ -1370,7 +1373,7 @@ class MainWindow(gtk.Window):
             self.shown_tracks.append(self.gps_track)
         self.rulers = 1
         self.ruler_coord = []
-        self.dragXY = None
+        self.dragXY = (0,0)
 
         # Initialize windows as None
         self.gpsw = None
