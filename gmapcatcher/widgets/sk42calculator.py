@@ -17,7 +17,7 @@ class Sk42Calculator(gtk.Window):
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         # lon, lat = pyproj.transform(pyproj.Proj(self.proj_wgs84, self.proj_sk42 , Lon, Lat)
 
-        self.changer = [True, False, False] # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
+        self.changer = [False, False, False] # if False then the changer is _wgs84_changed, otherwise changer is _sk42_changed
         self.useInputCordinates = False
 
         def _wgs84_activated(garbage, garbage_):
@@ -31,7 +31,6 @@ class Sk42Calculator(gtk.Window):
 
         def _wg84_changed(garbage):
             if self.changer == [1,0,0]:
-                print self._wgs84_Lon.get_text()
                 convertedLon, convertedLat = pyproj.transform(self.proj_wgs84, self.proj_sk42 , np.float64(self._wgs84_Lon.get_text()), np.float64(self._wgs84_Lat.get_text()))
                 self._sk42_Lat_full.set_text(str("%.9g" % convertedLat))
                 self._sk42_Lon_full.set_text(str("%.9g" % convertedLon))

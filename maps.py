@@ -29,7 +29,7 @@ from gmapcatcher.mapUtils import openGPX
 from gmapcatcher.widgets.DLWindow import DLWindow
 from gmapcatcher.widgets.EXWindow import EXWindow
 from gmapcatcher.widgets.customMsgBox import user_confirm, error_msg, error_msg_non_blocking
-from gmapcatcher.widgets.customWidgets import gtk, gtk_menu, myToolTip, myFrame, legal_warning, SpinBtn, FileChooser
+from gmapcatcher.widgets.customWidgets import lbl, myEntry, gtk, gtk_menu, myToolTip, myFrame, legal_warning, SpinBtn, FileChooser
 from gmapcatcher.widgets.gpsWindow import gpsWindow
 from gmapcatcher.widgets.mapTools import mapTools
 from gmapcatcher.widgets.trackWindow import trackWindow
@@ -82,6 +82,9 @@ class MainWindow(gtk.Window):
     edit_marker_pressed = False
     previous_mouse_drag_x = 0.0
     previous_mouse_drag_y = 0.0
+
+    compass_encoder_diff = 0
+    compass_encoder_changer = None
 
     geod = pyproj.Geod(ellps='WGS84')
 
@@ -430,6 +433,55 @@ class MainWindow(gtk.Window):
 
         hbox.pack_start(bbox, False, True, 15)
         return hbox
+    
+    def compass_encoder_diff_activated(self, garbage, garbage_):
+        self.compass_encoder_changer = [ True, False ] 
+
+    def compass_encoder_activated(self, garbage, garbage_):
+        self.compass_encoder_changer = [ False, True] 
+
+    def compass_encoder_diff_changed(self, garbage):
+        if self.compass_encoder_changer == [ True, False ]:
+            self.compass_entry.set_text("0")
+            self.encoder_entry.set_text("0")
+            self.compass_encoder_diff = float(self.compass_encoder_diff_entry.get_text())
+            if self.compass_encoder_diff >= 360:
+                self.compass_encoder_diff -= 360
+
+    def compass_encoder_changed(self, garbage):
+        if self.compass_encoder_changer == [ False, True ]:
+            self.compass_encoder_diff = float(self.compass_entry.get_text()) - float(self.encoder_entry.get_text())
+            self.compass_encoder_diff_entry.set_text(str("%.5g" % self.compass_encoder_diff))
+
+    def __create_compass_encoder(self):
+        vbox = gtk.HBox(False, 10)
+        hbox = gtk.HBox(False, 10)
+        hbox.pack_start(lbl("compass:"))
+        self.compass_entry = myEntry("%.6g" % 0, 10, False)
+        self.compass_entry.connect("changed", self.compass_encoder_changed)
+        hbox.pack_start(self.compass_entry, False)
+        vbox.pack_start(hbox)
+
+        hbox = gtk.HBox(False, 10)
+        hbox.pack_start(lbl("encoder:"))
+        self.encoder_entry = myEntry("%.6g" % 0, 10, False)
+        self.encoder_entry.connect("changed", self.compass_encoder_changed)
+        hbox.pack_start(self.encoder_entry, False)
+        vbox.pack_start(hbox)
+
+        hbox = gtk.HBox(False, 10)
+        hbox.pack_start(lbl("diff:"))
+        self.compass_encoder_diff = float(self.compass_entry.get_text()) - float(self.encoder_entry.get_text())
+        self.compass_encoder_diff_entry = myEntry("%.6g" % self.compass_encoder_diff, 10, False)
+        self.compass_encoder_diff_entry.connect("changed", self.compass_encoder_diff_changed)
+        hbox.pack_start(self.compass_encoder_diff_entry, False)
+        vbox.pack_start(hbox)
+
+        self.compass_entry.connect("focus_in_event", self.compass_encoder_activated)
+        self.encoder_entry.connect("focus_in_event", self.compass_encoder_activated)
+        self.compass_encoder_diff_entry.connect("focus_in_event", self.compass_encoder_diff_activated)
+
+        return vbox
 
     ## Creates the box with the CheckButtons
     def __create_check_buttons(self):
@@ -479,6 +531,7 @@ class MainWindow(gtk.Window):
         vbox.set_border_width(5)
         vbox.pack_start(self.__create_upper_box())
         vbox.pack_start(self.__create_check_buttons())
+        vbox.pack_start(self.__create_compass_encoder())
         vbox.set_size_request(-1, 89)
         return myFrame(" Query ", vbox, 0)
 
@@ -581,7 +634,7 @@ class MainWindow(gtk.Window):
                 distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
                 if azimuth < 0:
                     azimuth += 360
-                crw = CordinateWindow(azimuth, distance, start_point, end_point)
+                crw = CordinateWindow(azimuth, distance, start_point, end_point, self.compass_encoder_diff)
                 crw.show()
         elif strName == DA_MENU[SK42_CALC]:
             sk42calc = Sk42Calculator()

@@ -12,7 +12,7 @@ import pyproj
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class CordinateWindow(gtk.Window):
-    def __init__(self, azimuth, distance, start_point, end_point):
+    def __init__(self, azimuth, distance, start_point, end_point, compass_encoder_diff):
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         azimuth_hbox = gtk.HBox(False, 20)
@@ -40,6 +40,15 @@ class CordinateWindow(gtk.Window):
             hbox.pack_start(self.entry, False)
 
             hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("encoder:"))
+            azimuth_compass_encoder_diff = azimuth + compass_encoder_diff
+            # correcting the diff hwen its above 360
+            if azimuth_compass_encoder_diff >= 360:
+                azimuth_compass_encoder_diff -= 360
+            self.entry = myEntry("%.2f" % azimuth_compass_encoder_diff, 10, False)
+            hbox.pack_start(self.entry, False)
+            vbox.pack_start(hbox)
+
             hbox.pack_start(lbl("distance:"))
             self.entry = myEntry("%.1f" % distance, 10, False)
             hbox.pack_start(self.entry, False)
