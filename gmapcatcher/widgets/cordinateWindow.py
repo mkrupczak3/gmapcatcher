@@ -29,9 +29,19 @@ class CordinateWindow(gtk.Window):
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
+            hbox.pack_start(lbl("Дирекционный угол:"))
+            self.entry = myEntry("%.2f" % float(azimuth/6), 10, False)
+            hbox.pack_start(self.entry, False)
+            vbox.pack_start(hbox)
+
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("azimuth input:"))
+            self.entry = myEntry("%.2f" % distance, 10, False)
+            hbox.pack_start(self.entry, False)
+
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("distance:"))
-            self.entry = myEntry("%.6g" % distance, 10, False)
+            self.entry = myEntry("%.1f" % distance, 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
@@ -79,13 +89,13 @@ class CordinateWindow(gtk.Window):
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("X:"))
-            self.entry = myEntry(str("%.9f" % convertedLat), 10, False)
+            self.entry = myEntry(str("%.0f" % convertedLat), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("Y:"))
-            self.entry = myEntry(str("%.9f" % convertedLon), 10, False)
+            self.entry = myEntry(str("%.0f" % convertedLon), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
@@ -100,13 +110,13 @@ class CordinateWindow(gtk.Window):
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("latitude:"))
-            self.entry = myEntry(str("%.9f" % convertedLat), 10, False)
+            self.entry = myEntry(str("%.0f" % convertedLat), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
             hbox.pack_start(lbl("longitude:"))
-            self.entry = myEntry(str("%.9f" % convertedLon), 10, False)
+            self.entry = myEntry(str("%.0f" % convertedLon), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
