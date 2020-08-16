@@ -84,6 +84,8 @@ class MainWindow(gtk.Window):
     previous_mouse_drag_y = 0.0
 
     compass_encoder_diff = 0
+    mag_merid = 0
+    true_north = 0
     compass_encoder_changer = None
 
     geod = pyproj.Geod(ellps='WGS84')
@@ -402,7 +404,7 @@ class MainWindow(gtk.Window):
 
         gtk.stock_add([(gtk.STOCK_PREFERENCES, "", 0, 0, "")])
         button = gtk.Button(stock=gtk.STOCK_PREFERENCES)
-        button.set_size_request(34, -1)
+        button.set_size_request(34, 40)
         menu = gtk_menu(TOOLS_MENU, self.menu_tools)
         menu.prepend(self.operations_sub_menu())
 
@@ -434,10 +436,10 @@ class MainWindow(gtk.Window):
         hbox.pack_start(bbox, False, True, 15)
         return hbox
     
-    def compass_encoder_diff_activated(self, garbage, garbage_):
+    def compass_encoder_diff_activated_cb(self, garbage, garbage_):
         self.compass_encoder_changer = [ True, False ] 
 
-    def compass_encoder_activated(self, garbage, garbage_):
+    def compass_encoder_activated_cb(self, garbage, garbage_):
         self.compass_encoder_changer = [ False, True] 
 
     def compass_encoder_diff_changed(self, garbage):
@@ -450,7 +452,7 @@ class MainWindow(gtk.Window):
 
     def compass_encoder_changed(self, garbage):
         if self.compass_encoder_changer == [ False, True ]:
-            self.compass_encoder_diff = float(self.compass_entry.get_text()) - float(self.encoder_entry.get_text())
+            self.compass_encoder_diff = float(self.encoder_entry.get_text()) - float(self.compass_entry.get_text())
             self.compass_encoder_diff_entry.set_text(str("%.5g" % self.compass_encoder_diff))
 
     def __create_compass_encoder(self):
@@ -477,9 +479,33 @@ class MainWindow(gtk.Window):
         hbox.pack_start(self.compass_encoder_diff_entry, False)
         vbox.pack_start(hbox)
 
-        self.compass_entry.connect("focus_in_event", self.compass_encoder_activated)
-        self.encoder_entry.connect("focus_in_event", self.compass_encoder_activated)
-        self.compass_encoder_diff_entry.connect("focus_in_event", self.compass_encoder_diff_activated)
+        self.compass_entry.connect("focus_in_event", self.compass_encoder_activated_cb)
+        self.encoder_entry.connect("focus_in_event", self.compass_encoder_activated_cb)
+        self.compass_encoder_diff_entry.connect("focus_in_event", self.compass_encoder_diff_activated_cb)
+
+        return vbox
+
+    def mag_merid_changed(self, garbage):
+        self.mag_merid = float(self.mag_merid_entry.get_text())
+
+    def true_north_changed(self, garbage):
+        self.true_north = float(self.true_north_entry.get_text())
+
+    def __create_magdec(self):
+        vbox = gtk.HBox(False, 10)
+        hbox = gtk.HBox(False, 10)
+        hbox.pack_start(lbl("маг. мерид:"))
+        self.mag_merid_entry = myEntry("%.6g" % 0, 10, False)
+        self.mag_merid_entry.connect("changed", self.mag_merid_changed)
+        hbox.pack_start(self.mag_merid_entry, False)
+        vbox.pack_start(hbox)
+
+        hbox = gtk.HBox(False, 10)
+        hbox.pack_start(lbl("ист. мерид."))
+        self.true_north_entry = myEntry("%.6g" % 0, 10, False)
+        self.true_north_entry.connect("changed", self.true_north_changed)
+        hbox.pack_start(self.true_north_entry, False)
+        vbox.pack_start(hbox)
 
         return vbox
 
@@ -527,19 +553,21 @@ class MainWindow(gtk.Window):
         self.drawing_area.repaint()
 
     def __create_top_paned(self):
-        vbox = gtk.VBox(False, 5)
+        vbox = gtk.VBox(False, 8)
+        # vbox.set_size_request(-1, 140)
         vbox.set_border_width(5)
         vbox.pack_start(self.__create_upper_box())
         vbox.pack_start(self.__create_check_buttons())
         vbox.pack_start(self.__create_compass_encoder())
-        vbox.set_size_request(-1, 89)
+        vbox.pack_start(self.__create_magdec())
+        # vbox.set_size_request(-1, 89)
         return myFrame(" Query ", vbox, 0)
 
     def __create_left_paned(self, conf):
         vbox = gtk.VBox(False, 5)
         scale = gtk.VScale()
         scale.set_property("update-policy", gtk.UPDATE_DISCONTINUOUS)
-        scale.set_size_request(30, -1)
+        scale.set_size_request(30, 90)
         scale.set_increments(1, 1)
         scale.set_digits(0)
         scale.set_range(self.map_min_zoom, self.map_max_zoom)
@@ -634,7 +662,13 @@ class MainWindow(gtk.Window):
                 distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
                 if azimuth < 0:
                     azimuth += 360
-                crw = CordinateWindow(azimuth, distance, start_point, end_point, self.compass_encoder_diff)
+                crw = CordinateWindow(azimuth,
+                        distance,
+                        start_point,
+                        end_point,
+                        self.compass_encoder_diff,
+                        self.mag_merid,
+                        self.true_north)
                 crw.show()
         elif strName == DA_MENU[SK42_CALC]:
             sk42calc = Sk42Calculator()
@@ -1469,7 +1503,7 @@ class MainWindow(gtk.Window):
         inner_vp.pack2(self.export_panel, False, False)
 
         vpaned = gtk.VPaned()
-        vpaned.connect("notify", self.pane_notify, 89)
+        vpaned.connect("notify", self.pane_notify, 130)
         vpaned.pack1(self.top_panel, False, True)
         vpaned.pack2(inner_vp)
 

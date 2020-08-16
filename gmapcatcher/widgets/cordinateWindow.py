@@ -12,7 +12,7 @@ import pyproj
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class CordinateWindow(gtk.Window):
-    def __init__(self, azimuth, distance, start_point, end_point, compass_encoder_diff):
+    def __init__(self, azimuth, distance, start_point, end_point, compass_encoder_diff, mag_merid, true_north):
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         azimuth_hbox = gtk.HBox(False, 20)
@@ -24,13 +24,18 @@ class CordinateWindow(gtk.Window):
         def _area():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("azimuth:"))
+            hbox.pack_start(lbl("азимут:"))
             self.entry = myEntry("%.6g" % azimuth, 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox.pack_start(lbl("Дирекционный угол:"))
-            self.entry = myEntry("%.2f" % float(azimuth/6), 10, False)
+            self.entry = myEntry("%.2f" % float((azimuth - true_north)/6), 10, False)
+            hbox.pack_start(self.entry, False)
+            vbox.pack_start(hbox)
+
+            hbox.pack_start(lbl("маг. угол с искажением:"))
+            self.entry = myEntry("%.2f" % float((azimuth + mag_merid)/6), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
@@ -59,35 +64,35 @@ class CordinateWindow(gtk.Window):
         def _start_point():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("latitude:"))
+            hbox.pack_start(lbl("широта:"))
             self.azimuth = myEntry("%.6f" % start_point[0], 10, False)
             hbox.pack_start(self.azimuth, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("longitude:"))
+            hbox.pack_start(lbl("долгота:"))
             self.distance = myEntry("%.6f" % start_point[1], 10, False)
             hbox.pack_start(self.distance, False)
             vbox.pack_start(hbox)
 
-            return myFrame("Start Point", vbox)
+            return myFrame("базовая точка", vbox)
 
         def _end_point():
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("latitude:"))
+            hbox.pack_start(lbl("широта:"))
             self.entry = myEntry("%.6f" % end_point[0], 10, False)
             print(end_point[0])
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("longitude:"))
+            hbox.pack_start(lbl("долгота:"))
             self.entry = myEntry("%.6f" % end_point[1], 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
-            return myFrame("End Point", vbox)
+            return myFrame("цель", vbox)
 
         def _wgs_to_sk42_end_full():
             height = 900 
@@ -118,13 +123,13 @@ class CordinateWindow(gtk.Window):
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("latitude:"))
+            hbox.pack_start(lbl("широта:"))
             self.entry = myEntry(str("%.0f" % convertedLat), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("longitude:"))
+            hbox.pack_start(lbl("долгота:"))
             self.entry = myEntry(str("%.0f" % convertedLon), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
