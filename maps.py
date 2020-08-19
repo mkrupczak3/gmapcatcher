@@ -43,6 +43,7 @@ from gmapcatcher.xmlUtils import kml_to_markers
 from gmapcatcher.widgets.cordinateWindow import CordinateWindow
 from gmapcatcher.widgets.sk42calculator import Sk42Calculator
 from gmapcatcher.widgets.addMarker import AddMarker
+from gmapcatcher.widgets.addMarkerWithCurrentPoint import AddMarkerWithCurrentPoint
 import pyproj
 
 import imp, os, sys
@@ -629,6 +630,8 @@ class MainWindow(gtk.Window):
             self.show_export(self.myPointer)
         elif strName == DA_MENU[ADD_MARKER]:
             self.add_marker(self.myPointer)
+        elif strName == DA_MENU[ADD_MARKER_WITH_CURRENT_POINT]:
+            self.add_marker_with_point()
         elif strName == DA_MENU[MOUSE_LOCATION]:
             self.mouse_location(self.myPointer)
         elif strName == DA_MENU[GPS_LOCATION]:
@@ -720,6 +723,8 @@ class MainWindow(gtk.Window):
         else:
             coord = coordFromInput
 
+        # TODO clean debug
+        # print "coordFromInput: ", coordFromInput, "markerName: ", markerName, "color: ", color
         if markerName == "":
             markerName = None
         self.marker.append_marker(coord, markerName, color)
@@ -729,6 +734,17 @@ class MainWindow(gtk.Window):
         # passing add_marker_ok_button_handler to AddMarker, it will callback
         addMarkerWindow = AddMarker(self.add_marker_ok_button_handler, pointer)
         addMarkerWindow.show()
+
+    def add_marker_with_point(self):
+        try:
+            # get last clicked point lat/long
+            Base_Lat0 = self.last_two_clicked_markers[-1][0]
+            Base_Lon0 = self.last_two_clicked_markers[-1][1]
+            # add marker given current long/lat, compass and distance from target
+            addMarkerWindowWithCurrentPoint = AddMarkerWithCurrentPoint(Base_Lat0, Base_Lon0, self.add_marker_ok_button_handler)
+            addMarkerWindowWithCurrentPoint.show()
+        except:
+            self.status_bar.text("пожалуйста отметьте маркер чтобы добавить следующий маркер")
 
     ## Show the bottom panel with the export
     def show_export(self, pointer=None):

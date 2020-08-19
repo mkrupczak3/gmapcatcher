@@ -107,14 +107,15 @@ RESET = 3
 BATCH_DOWN = 5
 EXPORT_MAP = 6
 ADD_MARKER = 7
-MOUSE_LOCATION = 9
-GPS_LOCATION = 10
-GPS_DIRECTIONS = 12
-CALC_AZIMUTH = 14
-SK42_CALC = 15
-EDIT_MARKER = 16
+ADD_MARKER_WITH_CURRENT_POINT = 8
+MOUSE_LOCATION = 10
+GPS_LOCATION = 11
+GPS_DIRECTIONS = 13
+CALC_AZIMUTH = 15
+SK42_CALC = 16
+EDIT_MARKER = 17
 DA_MENU = ["Zoom In", "Zoom Out", "Center map here", "Reset",
-        "", "Batch Download", "Export Map", "Add Marker",
+        "", "Batch Download", "Export Map", "Add Marker", "Add marker with current point",
         "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Sk42 Calculator", "Edit Marker"]
 DA_MENU_LIM = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "-", "-", "Add Marker", "-", "-", "-", "-", "-"]
