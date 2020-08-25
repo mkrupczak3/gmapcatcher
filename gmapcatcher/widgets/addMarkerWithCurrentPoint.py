@@ -203,7 +203,8 @@ class AddMarkerWithCurrentPoint(gtk.Window):
             options = [["red", "marker_combo_red.png"],
                     ["blue", "marker_combo_blue.png"],
                     ["yellow", "marker_combo_yellow.png"],
-                    ["green", "marker_combo_green.png"]]
+                    ["green", "marker_combo_green.png"],
+                    ["camera_purple", "camera_combo_purple.png"]]
 
             self._marker_color = gtk.ComboBox(self.store)            
 

@@ -297,6 +297,7 @@ class DrawingArea(gtk.DrawingArea):
             self.blue = self.marker.get_marker_pixbuf(zl, image = "marker_s_blue.png")
             self.yellow = self.marker.get_marker_pixbuf(zl, image = "marker_s_yellow.png")
             self.green = self.marker.get_marker_pixbuf(zl, image = "marker_s_green.png")
+            self.camera_purple = self.marker.get_marker_pixbuf(zl, image = "camera_s_purple.png")
 
         def run(self):
             while not self.__stop.isSet():
@@ -325,6 +326,8 @@ class DrawingArea(gtk.DrawingArea):
                             self.da.draw_marker(self.conf, mpos, self.zl, self.yellow, self.pixDim, string)
                         elif marker_image_index == MARKER_GREEN:
                             self.da.draw_marker(self.conf, mpos, self.zl, self.green, self.pixDim, string)
+                        elif marker_image_index == CAMERA_PURPLE:
+                            self.da.draw_marker(self.conf, mpos, self.zl, self.camera_purple, self.pixDim, string)
                         else:
                             self.da.draw_marker(self.conf, mpos, self.zl, self.red, self.pixDim, string)
                     finally:
