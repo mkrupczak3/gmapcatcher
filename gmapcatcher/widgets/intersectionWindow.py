@@ -19,6 +19,14 @@ class IntersectionWindow(gtk.Window):
     # in this case pointer is useless, supporting old code
     # pointer is just passing values to handler
     def __init__(self, first_point, second_point, handler, pointer):
+        if first_point[0] == second_point[0]:
+            md = gtk.MessageDialog(self, 
+                    gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                    gtk.BUTTONS_CLOSE, "пожалуйста, выберите разные точки")
+            md.run()
+            md.destroy()
+            return
+
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         sk42_hbox_full = gtk.HBox(False, 20)
@@ -178,13 +186,26 @@ class IntersectionWindow(gtk.Window):
             return hbox
 
         def btn_ok_cb(button):
-            color = self._marker_color.get_active()
-            intersectedLat, interesctedLon = computeIntersection(first_point[0], first_point[1], float(self.angle1.get_text()), second_point[0], second_point[1], float(self.angle2.get_text()))
-            handler(color,
-                        str(self._marker_name.get_text()),
-                        pointer,
-                        (intersectedLat, interesctedLon, 1))
-            self.destroy()
+            if float(self.angle1.get_text()) == float(self.angle2.get_text()):
+                md = gtk.MessageDialog(self, 
+                        gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                        gtk.BUTTONS_CLOSE, "линии не пересекаются\nпожалуйста, напишите разные углы !!!")
+                md.run()
+                md.destroy()
+            elif abs(float(self.angle1.get_text()) - float(self.angle2.get_text())) == 180:
+                md = gtk.MessageDialog(self, 
+                        gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                        gtk.BUTTONS_CLOSE, "линии не пересекаются\nпожалуйста, напишите непоралелные углы !!!")
+                md.run()
+                md.destroy()
+            else:
+                color = self._marker_color.get_active()
+                intersectedLat, interesctedLon = computeIntersection(first_point[0], first_point[1], float(self.angle1.get_text()), second_point[0], second_point[1], float(self.angle2.get_text()))
+                handler(color,
+                            str(self._marker_name.get_text()),
+                            pointer,
+                            (intersectedLat, interesctedLon, 1))
+                self.destroy()
 
         gtk.Window.__init__(self)
         vbox = gtk.VBox(False)

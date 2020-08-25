@@ -681,9 +681,16 @@ class MainWindow(gtk.Window):
             self.edit_marker_pressed = True
             self.drawing_area.da_set_cursor(gtk.gdk.CROSS)
         elif strName == DA_MENU[CALC_INTERSECTION]:
-            start_point = self.last_two_clicked_markers[-2]
-            end_point = self.last_two_clicked_markers[-1]
-            intersectionWidnow = IntersectionWindow(start_point, end_point, self.add_marker_ok_button_handler, pointer=None)
+            try:
+                start_point = self.last_two_clicked_markers[-2]
+                end_point = self.last_two_clicked_markers[-1]
+                intersectionWidnow = IntersectionWindow(start_point, end_point, self.add_marker_ok_button_handler, pointer=None)
+            except:
+                md = gtk.MessageDialog(self, 
+                        gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                        gtk.BUTTONS_CLOSE, "пожалуйста отметьте маркер чтобы добавить следующий маркер")
+                md.run()
+                md.destroy()
 
     # This function is called when Edit Marker has been called 
     # from right click drop down menu then right clicked on the map
@@ -749,7 +756,11 @@ class MainWindow(gtk.Window):
             addMarkerWindowWithCurrentPoint = AddMarkerWithCurrentPoint(Base_Lat0, Base_Lon0, self.add_marker_ok_button_handler)
             addMarkerWindowWithCurrentPoint.show()
         except:
-            self.status_bar.text("пожалуйста отметьте маркер чтобы добавить следующий маркер")
+            md = gtk.MessageDialog(self, 
+                    gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                    gtk.BUTTONS_CLOSE, "пожалуйста отметьте маркер чтобы добавить следующий маркер")
+            md.run()
+            md.destroy()
 
     ## Show the bottom panel with the export
     def show_export(self, pointer=None):

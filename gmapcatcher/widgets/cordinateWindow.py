@@ -13,6 +13,13 @@ from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class CordinateWindow(gtk.Window):
     def __init__(self, azimuth, distance, start_point, end_point, compass_encoder_diff, mag_merid, true_north):
+        if start_point[0] == end_point[0]:
+            md = gtk.MessageDialog(self, 
+                    gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                    gtk.BUTTONS_CLOSE, "пожалуйста, выберите разные точки")
+            md.run()
+            md.destroy()
+            return
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         azimuth_hbox = gtk.HBox(False, 20)
