@@ -10,12 +10,12 @@ from gmapcatcher.mapMark import MyMarkers
 import numpy as np
 import pyproj
 
-
 from gmapcatcher.mapConst import *
 
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class AddMarker(gtk.Window):
+    # in this case pointer is useless, supporting old code
     # pointer is just passing values to handler
     def __init__(self, handler, pointer):
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
@@ -107,7 +107,8 @@ class AddMarker(gtk.Window):
             options = [["red", "marker_combo_red.png"],
                     ["blue", "marker_combo_blue.png"],
                     ["yellow", "marker_combo_yellow.png"],
-                    ["green", "marker_combo_green.png"]]
+                    ["green", "marker_combo_green.png"],
+                    ["camera_purple", "camera_combo_purple.png"]]
 
             self._marker_color = gtk.ComboBox(self.store)            
 

@@ -41,6 +41,7 @@ from gmapcatcher.widgets.widMapExport import MapExport
 from gmapcatcher.widgets.widStatusBar import StatusBar
 from gmapcatcher.xmlUtils import kml_to_markers
 from gmapcatcher.widgets.cordinateWindow import CordinateWindow
+from gmapcatcher.widgets.intersectionWindow import IntersectionWindow
 from gmapcatcher.widgets.sk42calculator import Sk42Calculator
 from gmapcatcher.widgets.addMarker import AddMarker
 from gmapcatcher.widgets.addMarkerWithCurrentPoint import AddMarkerWithCurrentPoint
@@ -679,6 +680,10 @@ class MainWindow(gtk.Window):
         elif strName == DA_MENU[EDIT_MARKER]:
             self.edit_marker_pressed = True
             self.drawing_area.da_set_cursor(gtk.gdk.CROSS)
+        elif strName == DA_MENU[CALC_INTERSECTION]:
+            start_point = self.last_two_clicked_markers[-2]
+            end_point = self.last_two_clicked_markers[-1]
+            intersectionWidnow = IntersectionWindow(start_point, end_point, self.add_marker_ok_button_handler, pointer=None)
 
     # This function is called when Edit Marker has been called 
     # from right click drop down menu then right clicked on the map

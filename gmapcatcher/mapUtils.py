@@ -5,6 +5,7 @@
 import re
 import os
 import math
+from pygeodesy.sphericalNvector import *
 from mapConst import *
 from widgets.customWidgets import FileChooser, FileSaveChooser
 from time import gmtime, strftime
@@ -318,6 +319,13 @@ def convertUnits(unit_from, unit_to, value):
             return float(value) * 1.15077945
     return value
 
+def computeIntersection(lat1, lon1, deg1, lat2, lon2, deg2):
+    # Documentation here
+    # https://mrjean1.github.io/PyGeodesy/docs/pygeodesy.sphericalNvector-module.html
+    p = LatLon(lat1, lon1)
+    q = LatLon(lat2, lon2)
+    i = intersection(p, deg1, q, deg2, LatLon=None)
+    return i[3], i[4]
 
 class Track:
     def __init__(self, points, name=None, distance=None):

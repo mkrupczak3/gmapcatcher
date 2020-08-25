@@ -88,6 +88,7 @@ MARKER_DEFAULT_COLOR = 0
 MARKER_BLUE = 1
 MARKER_YELLOW = 2
 MARKER_GREEN = 3
+CAMERA_PURPLE = 4
 
 MAP_MAX_ZOOM_LEVEL = 17
 MAP_MIN_ZOOM_LEVEL = -2
@@ -114,9 +115,10 @@ GPS_DIRECTIONS = 13
 CALC_AZIMUTH = 15
 SK42_CALC = 16
 EDIT_MARKER = 17
+CALC_INTERSECTION = 18
 DA_MENU = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "Batch Download", "Export Map", "Add Marker", "Add marker with current point",
-        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Sk42 Calculator", "Edit Marker"]
+        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Sk42 Calculator", "Edit Marker", "Calculate Intersection"]
 DA_MENU_LIM = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "-", "-", "Add Marker", "-", "-", "-", "-", "-"]
 
