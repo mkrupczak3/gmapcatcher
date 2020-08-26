@@ -192,7 +192,13 @@ class IntersectionWindow(gtk.Window):
                         gtk.BUTTONS_CLOSE, "линии не пересекаются\nпожалуйста, напишите разные углы !!!")
                 md.run()
                 md.destroy()
-            elif abs(float(self.angle1.get_text()) - float(self.angle2.get_text())) == 180:
+            elif float(self.angle1.get_text()) > 360 or float(self.angle1.get_text()) < 0 or float(self.angle2.get_text()) > 360 or float(self.angle2.get_text()) < 0:
+                md = gtk.MessageDialog(self, 
+                        gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+                        gtk.BUTTONS_CLOSE, "напишите углы с 0 до 360 !!!")
+                md.run()
+                md.destroy()
+            elif abs(float(self.angle1.get_text()) - float(self.angle2.get_text())) == 180 or abs(float(self.angle1.get_text()) - float(self.angle2.get_text())) == 360:
                 md = gtk.MessageDialog(self, 
                         gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
                         gtk.BUTTONS_CLOSE, "линии не пересекаются\nпожалуйста, напишите непоралелные углы !!!")
