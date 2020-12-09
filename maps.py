@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
 ## @package maps
@@ -21,6 +21,7 @@ from gmapcatcher.gtkThread import gui_callback, webbrowser_open
 from gmapcatcher.mapConf import MapConf
 from gmapcatcher.mapConst import *
 from gmapcatcher.mapDownloader import MapDownloader
+from gmapcatcher.mapElevation import MapElevation
 from gmapcatcher.mapMark import MyMarkers
 from gmapcatcher.editMarker import EditMarker
 from gmapcatcher.mapServices import MapServ
@@ -949,6 +950,7 @@ class MainWindow(gtk.Window):
                 
             # Find nearest marker...
             # Check if left-clicked to edit marker position, mouse status bar is on, is not in ruler mode and map not dragged
+
             if event.button == 1 and self.conf.statusbar_type == STATUS_MOUSE and not self.Ruler \
                     and abs(event.x - self.dragXY[0]) < 5 and abs(event.y - self.dragXY[1]) < 5:
                 coord = self.pointer_to_world_coord((event.x, event.y))
@@ -961,7 +963,7 @@ class MainWindow(gtk.Window):
                 if len(markerDisp2_list) > 0:
                     # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
                     closestMarkerName=str(sorted(markerDisp2_list)[0][1])
-                    self.status_bar.text(closestMarkerName)
+                    # self.status_bar.text(closestMarkerName)
                 # ********************************** CALC_AZIMUTH patch ******************************************
                 markerDisp2_list = []
                 for markerName in self.marker.positions.keys():
@@ -1047,7 +1049,8 @@ class MainWindow(gtk.Window):
 
         if self.conf.statusbar_type == STATUS_MOUSE and not self.Ruler:
             coord = self.pointer_to_world_coord((event.x, event.y))
-            self.status_bar.coordinates(coord[0], coord[1])
+            height = self.mapElevation.getHeight(coord)
+            self.status_bar.text("Lat: "+str(coord[0]) + " Long: " + str(coord[1]) + " height: " +str(height) + "m")
 
     def view_credits(self, menuitem):
         w = OurCredits()
@@ -1464,6 +1467,7 @@ class MainWindow(gtk.Window):
         dThread.start()
 
     def __init__(self, parent=None, config_path=None):
+        self.mapElevation = MapElevation()
         self.conf = MapConf(config_path)
         self.crossPixbuf = mapPixbuf.cross()
         self.dlpixbuf = mapPixbuf.downloading()
