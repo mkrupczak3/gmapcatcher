@@ -675,6 +675,27 @@ class MainWindow(gtk.Window):
                         self.mag_merid,
                         self.true_north)
                 crw.show()
+        elif strName == DA_MENU[CALC_AZIMUTH_ELEVATION_PROFILE]:
+            if len(self.last_two_clicked_markers) >= 2:
+                Lat0 = self.last_two_clicked_markers[-1][0]
+                Lon0 = self.last_two_clicked_markers[-1][1]
+                Lat1 = self.last_two_clicked_markers[-2][0]
+                Lon1 = self.last_two_clicked_markers[-2][1]
+                start_point = self.last_two_clicked_markers[-2]
+                end_point = self.last_two_clicked_markers[-1]
+                azimuth = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[0]
+                distance = self.geod.inv(Lon1, Lat1, Lon0, Lat0)[2]
+                if azimuth < 0:
+                    azimuth += 360
+                crw = CordinateWindow(azimuth,
+                        distance,
+                        start_point,
+                        end_point,
+                        self.compass_encoder_diff,
+                        self.mag_merid,
+                        self.true_north,
+                        show_elevation = True)
+                crw.show()
         elif strName == DA_MENU[SK42_CALC]:
             sk42calc = Sk42Calculator()
             sk42calc.show()
@@ -963,7 +984,7 @@ class MainWindow(gtk.Window):
                 if len(markerDisp2_list) > 0:
                     # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
                     closestMarkerName=str(sorted(markerDisp2_list)[0][1])
-                    # self.status_bar.text(closestMarkerName)
+                    self.status_bar.text(closestMarkerName)
                 # ********************************** CALC_AZIMUTH patch ******************************************
                 markerDisp2_list = []
                 for markerName in self.marker.positions.keys():

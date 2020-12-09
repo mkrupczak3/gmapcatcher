@@ -9,10 +9,14 @@ import numpy as np
 from WGS84_SK42_Translator import Translator as converter
 import pyproj
 
+import math
+import matplotlib.pyplot as plt
+from gmapcatcher.mapElevation import MapElevation
+
 from customWidgets import lbl, myEntry, myFrame, SpinBtn, FolderChooser
 
 class CordinateWindow(gtk.Window):
-    def __init__(self, azimuth, distance, start_point, end_point, compass_encoder_diff, mag_merid, true_north):
+    def __init__(self, azimuth, distance, start_point, end_point, compass_encoder_diff, mag_merid, true_north, show_elevation = False):
         if start_point[0] == end_point[0]:
             md = gtk.MessageDialog(self, 
                     gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
@@ -143,21 +147,98 @@ class CordinateWindow(gtk.Window):
 
             return myFrame("SK42 full EPSG:28468", vbox)
 
-        gtk.Window.__init__(self)
-        vbox = gtk.VBox(False)
-        hbox = gtk.HBox(False, 10)
-        hbox.pack_start(_area())
+        def show_elevation_profile():
+            mapElevation = MapElevation()
 
-        azimuth_hbox.pack_start(_start_point())
-        azimuth_hbox.pack_start(_end_point())
+            #START-END POINT
+            P1=start_point
+            P2=end_point
 
-        sk42_hbox_full.pack_start(_wgs_to_sk42_start_full())
-        sk42_hbox_full.pack_start(_wgs_to_sk42_end_full())
+            #NUMBER OF POINTS
+            s=100
+            interval_lat=(P2[0]-P1[0])/s #interval for latitude
+            interval_lon=(P2[1]-P1[1])/s #interval for longitude
 
-        vbox.pack_start(hbox)
-        vbox.pack_start(azimuth_hbox)
-        vbox.pack_start(sk42_hbox_full)
-        self.add(vbox)
-        self.set_title("Azimuth and Distance Calculator")
-        self.set_border_width(10)
-        self.show_all()
+            #SET A NEW VARIABLE FOR START POINT
+            lat0=P1[0]
+            lon0=P1[1]
+
+            #LATITUDE AND LONGITUDE LIST
+            lat_list=[lat0]
+            lon_list=[lon0]
+
+            #GENERATING POINTS
+            for i in range(s):
+                lat_step=lat0+interval_lat
+                lon_step=lon0+interval_lon
+                lon0=lon_step
+                lat0=lat_step
+                lat_list.append(lat_step)
+                lon_list.append(lon_step)
+
+            #HAVERSINE FUNCTION
+            def haversine(lat1,lon1,lat2,lon2):
+                lat1_rad=math.radians(lat1)
+                lat2_rad=math.radians(lat2)
+                lon1_rad=math.radians(lon1)
+                lon2_rad=math.radians(lon2)
+                delta_lat=lat2_rad-lat1_rad
+                delta_lon=lon2_rad-lon1_rad
+                a=math.sqrt((math.sin(delta_lat/2))**2+math.cos(lat1_rad)*math.cos(lat2_rad)*(math.sin(delta_lon/2))**2)
+                d=2*6371000*math.asin(a)
+                return d
+
+            #DISTANCE CALCULATION
+            d_list=[]
+            elev_list=[]
+            for j in range(len(lat_list)):
+                lat_p=lat_list[j]
+                lon_p=lon_list[j]
+                elev_list.append(mapElevation.getHeight((lat_p, lon_p)))
+                dp=haversine(lat0,lon0,lat_p,lon_p)/1000 #km
+                d_list.append(dp)
+            d_list_rev=d_list[::-1] #reverse list
+
+            #BASIC STAT INFORMATION
+            mean_elev=round((sum(elev_list)/len(elev_list)),3)
+            min_elev=min(elev_list)
+            max_elev=max(elev_list)
+            distance=d_list_rev[-1]
+
+            #PLOT ELEVATION PROFILE
+            base_reg=0
+            plt.figure(figsize=(10,4))
+            plt.plot(d_list_rev,elev_list)
+            plt.plot([0,distance],[min_elev,min_elev],'--g',label='min: '+str(min_elev)+' m')
+            plt.plot([0,distance],[max_elev,max_elev],'--r',label='max: '+str(max_elev)+' m')
+            plt.plot([0,distance],[mean_elev,mean_elev],'--y',label='ave: '+str(mean_elev)+' m')
+            plt.fill_between(d_list_rev,elev_list,base_reg,alpha=0.1)
+            plt.text(d_list_rev[0],elev_list[0],"P1")
+            plt.text(d_list_rev[-1],elev_list[-1],"P2")
+            plt.xlabel("Distance(km)")
+            plt.ylabel("Elevation(m)")
+            plt.grid()
+            plt.legend(fontsize='small')
+
+        if show_elevation == True:
+            show_elevation_profile()
+            plt.show()
+        else:
+            gtk.Window.__init__(self)
+            vbox = gtk.VBox(False)
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(_area())
+
+            azimuth_hbox.pack_start(_start_point())
+            azimuth_hbox.pack_start(_end_point())
+
+            sk42_hbox_full.pack_start(_wgs_to_sk42_start_full())
+            sk42_hbox_full.pack_start(_wgs_to_sk42_end_full())
+
+            vbox.pack_start(hbox)
+            vbox.pack_start(azimuth_hbox)
+            vbox.pack_start(sk42_hbox_full)
+            self.add(vbox)
+            self.set_title("Azimuth and Distance Calculator")
+            self.set_border_width(10)
+            self.show_all()

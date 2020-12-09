@@ -18,7 +18,6 @@ class MapElevation:
         self.pixelHeight = -transform[5]
 
         self.data = band.ReadAsArray(0, 0, cols, rows)
-        print "init complete"
 
     # in meters
     def getHeight(self, coord):

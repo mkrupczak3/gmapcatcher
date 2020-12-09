@@ -113,12 +113,13 @@ MOUSE_LOCATION = 10
 GPS_LOCATION = 11
 GPS_DIRECTIONS = 13
 CALC_AZIMUTH = 15
-SK42_CALC = 16
-EDIT_MARKER = 17
-CALC_INTERSECTION = 18
+CALC_AZIMUTH_ELEVATION_PROFILE = 16
+SK42_CALC = 17
+EDIT_MARKER = 18
+CALC_INTERSECTION = 19
 DA_MENU = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "Batch Download", "Export Map", "Add Marker", "Add marker with current point",
-        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Sk42 Calculator", "Edit Marker", "Calculate Intersection"]
+        "", "Copy Location", "Copy GPS", "", "Directions from GPS to here", "", "Calculate Azimuth", "Show Elevation Profile", "Sk42 Calculator", "Edit Marker", "Calculate Intersection"]
 DA_MENU_LIM = ["Zoom In", "Zoom Out", "Center map here", "Reset",
         "", "-", "-", "Add Marker", "-", "-", "-", "-", "-"]
 
