@@ -131,6 +131,7 @@ REPOS_TYPE_RMAPS = 4
 REPOS_TYPE = ["Files", "SQLite3", "MGMaps", "OSM", "RMaps"]
 DEFAULT_REPOS_TYPE = 0
 SQLITE3_REPOSITORY_FILE = "tilerepository.db"
+MAP_ELEVATION_TIFF = "elevation.tiff"
 RMAPS_REPOSITORY_FILE_FORMAT = "tile-%s.sqlitedb"
 
 STATUS_NONE = 0

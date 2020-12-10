@@ -1,10 +1,14 @@
 import gdal
+from gmapcatcher.mapConst import *
+import os
 
 class MapElevation:
     def __init__(self):
         try:
             driver = gdal.GetDriverByName('GTiff')
-            filename = "/home/rafael/.GMapCatcher/elevation.tiff" #path to raster
+            localPath = os.path.expanduser(DEFAULT_PATH)
+            filename = os.path.join(localPath, MAP_ELEVATION_TIFF) #path to raster
+            print filename
             dataset = gdal.Open(filename)
             band = dataset.GetRasterBand(1)
 
@@ -20,7 +24,7 @@ class MapElevation:
 
             self.data = band.ReadAsArray(0, 0, cols, rows)
         except Exception as ex:
-           pass 
+            print ex
 
     # in meters
     def getHeight(self, coord):
