@@ -1,3 +1,6 @@
+## troubleshooting packages ##
+for arch linux "import gobject" install "python2-gobject2" package with pacman
+
 ## Overview ##
 
 GMapCatcher is an offline maps viewer. It can display maps from many providers such as:
@@ -58,3 +61,8 @@ For a complete list of tested OS, see wiki [Tested Operating Systems](https://gi
 If you choose to run directly from sources you must have all dependencies, see wiki: 
 https://github.com/heldersepu/GMapCatcher/blob/wiki/devEnv.md
 or see [win_install](win_install.md) for windows.
+
+## elevation data
+download geotiff from https://search.earthdata.nasa.gov/
+
+merge multiple geotiffs with "qgis" software output file must be elevation.tiff in .GMapCatcher

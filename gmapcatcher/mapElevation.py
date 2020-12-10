@@ -4,7 +4,7 @@ class MapElevation:
     def __init__(self):
         try:
             driver = gdal.GetDriverByName('GTiff')
-            filename = "/home/rafael/.GMapCatcher/elevation.tif" #path to raster
+            filename = "/home/rafael/.GMapCatcher/elevation.tiff" #path to raster
             dataset = gdal.Open(filename)
             band = dataset.GetRasterBand(1)
 
