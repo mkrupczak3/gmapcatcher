@@ -981,7 +981,7 @@ class MainWindow(gtk.Window):
                     markerDisp2 = (self.marker.positions[markerName][0] - coord[0]) ** 2 + (
                             self.marker.positions[markerName][1] - coord[1]) ** 2
                     markerDisp2_list.append((markerDisp2, markerName))
-                if len(markerDisp2_list) > 0:
+                if len(marketDisp2_list) > 0:
                     # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
                     closestMarkerName=str(sorted(markerDisp2_list)[0][1])
                     self.status_bar.text(closestMarkerName)
@@ -1069,9 +1069,12 @@ class MainWindow(gtk.Window):
                         self.drawing_area.da_set_cursor()
 
         if self.conf.statusbar_type == STATUS_MOUSE and not self.Ruler:
-            coord = self.pointer_to_world_coord((event.x, event.y))
-            height = self.mapElevation.getHeight(coord)
-            self.status_bar.text("Lat: "+str(coord[0]) + " Long: " + str(coord[1]) + " height: " +str(height) + "m")
+            try:
+                coord = self.pointer_to_world_coord((event.x, event.y))
+                height = self.mapElevation.getHeight(coord)
+                self.status_bar.text("Lat: "+str(coord[0]) + " Long: " + str(coord[1]) + " height: " +str(height) + "m")
+            except Exception:
+                self.status_bar.text("Lat: "+str(coord[0]) + " Long: " + str(coord[1]))
 
     def view_credits(self, menuitem):
         w = OurCredits()
