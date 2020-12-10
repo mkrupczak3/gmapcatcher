@@ -981,7 +981,7 @@ class MainWindow(gtk.Window):
                     markerDisp2 = (self.marker.positions[markerName][0] - coord[0]) ** 2 + (
                             self.marker.positions[markerName][1] - coord[1]) ** 2
                     markerDisp2_list.append((markerDisp2, markerName))
-                if len(marketDisp2_list) > 0:
+                if len(markerDisp2_list) > 0:
                     # self.status_bar.text(str(sorted(markerDisp2_list)[0][1]))
                     closestMarkerName=str(sorted(markerDisp2_list)[0][1])
                     self.status_bar.text(closestMarkerName)
