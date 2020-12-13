@@ -10,6 +10,8 @@ from WGS84_SK42_Translator import Translator as converter
 import pyproj
 
 import math
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from gmapcatcher.mapElevation import MapElevation
 
@@ -24,6 +26,8 @@ class CordinateWindow(gtk.Window):
             md.run()
             md.destroy()
             return
+        self.start_point = start_point
+        self.end_point = end_point
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         azimuth_hbox = gtk.HBox(False, 20)

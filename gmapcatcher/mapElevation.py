@@ -32,5 +32,5 @@ class MapElevation:
             col = int((coord[1] - self.xOrigin) / self.pixelWidth)
             row = int((self.yOrigin - coord[0] ) / self.pixelHeight)
             return self.data[row][col]
-        except Exeption as ex:
+        except Exception as ex:
             pass

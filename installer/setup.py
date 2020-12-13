@@ -33,7 +33,10 @@ if os.name == "posix":
                     'gmapcatcher.gpxpy', 'gmapcatcher.gps']
     )
 else:
+    import matplotlib
     import py2exe
+    matplotlib.use('TkAgg')
+    import matplotlib.backends.backend_tkagg
     DLL_EXCLUDES = [ 
                  'KERNELBASE.dll',
                  'MSIMG32.dll',
@@ -57,6 +60,23 @@ else:
                  'API-MS-Win-Core-ProcessThreads-L1-1-0.dll',
                  'API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll',
                  'API-MS-Win-Core-LocalRegistry-L1-1-0.dll',
+                 'MSVCP90.dll',
+                 'api-ms-win-core-registry-l1-1-0.dll',
+                 'api-ms-win-core-string-obsolete-l1-1-0.dll',
+                 'api-ms-win-security-base-l1-1-0.dll',
+                 'api-ms-win-core-localization-obsolete-l1-2-0.dll',
+                 'api-ms-win-core-libraryloader-l1-2-1.dll',
+                 'api-ms-win-crt-private-l1-1-0.dll',
+                 'api-ms-win-core-processthreads-l1-1-1.dll',
+                 'api-ms-win-core-heap-l2-1-0.dll',
+                 'api-ms-win-core-delayload-l1-1-1.dll',
+                 'api-ms-win-crt-string-l1-1-0.dll',
+                 'api-ms-win-core-synch-l1-2-1.dll',
+                 'api-ms-win-core-libraryloader-l1-2-0.dll',
+                 'api-ms-win-core-realtime-l1-1-0.dll',
+                 'api-ms-win-crt-runtime-l1-1-0.dll',
+                 'api-ms-win-core-interlocked-l1-1-0.dll',
+                 'api-ms-win-security-activedirectoryclient-l1-1-0.dll',
                  'w9xpopen.exe'] # is not excluded for some reasion
     setup(
         name = NAME,
@@ -71,10 +91,14 @@ else:
         options = {
             'py2exe': {
                 'packages':'encodings',
-                'includes': 'cairo, pango, pangocairo, atk, gobject, gio',
+                'includes': 'matplotlib.backends.backend_tkagg, cairo, pango, pangocairo, atk, gobject, gio', 
                 'dll_excludes': DLL_EXCLUDES,
+                #'py2exe': { "includes" : ["matplotlib.backends.backend_tkagg"] }
             }
         },
-        data_files = [ "README.md", "changelog.md",
-		( "pyproj", glob( os.path.join( pyProjData, "*" )))]
+        # opts = {
+        #     'py2exe': { "includes" : ["matplotlib.backends.backend_tkagg"] }
+        #     },
+        data_files = matplotlib.get_py2exe_datafiles() + [ "README.md", "changelog.md",
+                    ( "pyproj", glob( os.path.join( pyProjData, "*" ))) ]
     )

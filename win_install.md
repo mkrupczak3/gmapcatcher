@@ -31,3 +31,6 @@ pygtk-all-in-one
 ### add python2 to windows registry 
 *	https://stackoverflow.com/questions/27950855/add-python-2-7-6-to-the-windows-registry
 reg add HKLM\SOFTWARE\Wow6432Node\Python\PythonCore\2.7\InstallPath /ve /t REG_SZ /d "C:\Python27" /f
+
+## gdal solution
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal
