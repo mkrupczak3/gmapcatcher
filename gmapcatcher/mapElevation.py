@@ -8,7 +8,6 @@ class MapElevation:
             driver = gdal.GetDriverByName('GTiff')
             localPath = os.path.expanduser(DEFAULT_PATH)
             filename = os.path.join(localPath, MAP_ELEVATION_TIFF) #path to raster
-            print filename
             dataset = gdal.Open(filename)
             band = dataset.GetRasterBand(1)
 
@@ -33,4 +32,5 @@ class MapElevation:
             row = int((self.yOrigin - coord[0] ) / self.pixelHeight)
             return self.data[row][col]
         except Exception as ex:
-            pass
+            print coord
+            print ex

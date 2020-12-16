@@ -32,6 +32,7 @@ class CordinateWindow(gtk.Window):
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
         azimuth_hbox = gtk.HBox(False, 20)
         sk42_hbox_full = gtk.HBox(False, 20)
+        height_hbox = gtk.HBox(False, 20)
 
         self.proj_wgs84 = pyproj.Proj(init="epsg:4326")
         self.proj_sk42 = pyproj.Proj(init="epsg:28468")
@@ -138,18 +139,42 @@ class CordinateWindow(gtk.Window):
 
             vbox = gtk.VBox(False, 5)
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("широта:"))
+            hbox.pack_start(lbl("X:"))
             self.entry = myEntry(str("%.0f" % convertedLat), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             hbox = gtk.HBox(False, 10)
-            hbox.pack_start(lbl("долгота:"))
+            hbox.pack_start(lbl("Y:"))
             self.entry = myEntry(str("%.0f" % convertedLon), 10, False)
             hbox.pack_start(self.entry, False)
             vbox.pack_start(hbox)
 
             return myFrame("SK42 full EPSG:28468", vbox)
+
+        def _start_point_height():
+            mapElevation = MapElevation()
+            height = mapElevation.getHeight(start_point)
+            vbox = gtk.VBox(False, 5)
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("высота:"))
+            self.azimuth = myEntry(str(height), 10, False)
+            hbox.pack_start(self.azimuth, False)
+            vbox.pack_start(hbox)
+
+            return myFrame("базовая точка", vbox)
+
+        def _end_point_height():
+            mapElevation = MapElevation()
+            height = mapElevation.getHeight(end_point)
+            vbox = gtk.VBox(False, 5)
+            hbox = gtk.HBox(False, 10)
+            hbox.pack_start(lbl("высота:"))
+            self.azimuth = myEntry(str(height), 10, False)
+            hbox.pack_start(self.azimuth, False)
+            vbox.pack_start(hbox)
+
+            return myFrame("цель", vbox)
 
         def show_elevation_profile():
             mapElevation = MapElevation()
@@ -239,9 +264,13 @@ class CordinateWindow(gtk.Window):
             sk42_hbox_full.pack_start(_wgs_to_sk42_start_full())
             sk42_hbox_full.pack_start(_wgs_to_sk42_end_full())
 
+            height_hbox.pack_start(_start_point_height())
+            height_hbox.pack_start(_end_point_height())
+
             vbox.pack_start(hbox)
             vbox.pack_start(azimuth_hbox)
             vbox.pack_start(sk42_hbox_full)
+            vbox.pack_start(height_hbox)
             self.add(vbox)
             self.set_title("Azimuth and Distance Calculator")
             self.set_border_width(10)
