@@ -144,7 +144,8 @@ class MySettings():
             conf.init_zoom = self.s_zoom.get_value_as_int()
             conf.init_width = self.s_width.get_value_as_int()
             conf.init_height = self.s_height.get_value_as_int()
-            conf.statusbar_type = self.cmb_status_type.get_active()
+            # workaround with status problem
+            conf.statusbar_type = 2 #self.cmb_status_type.get_active()
             conf.save_at_close = self.save_at_close_button.get_active()
             conf.units = self.cmb_unit_type.get_active()
             conf.start_offline = self.cmb_start_offline.get_active()
