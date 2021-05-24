@@ -4,11 +4,11 @@
 
 ## Calculate Azimuth ##
 given two positions (selected by left click), show azimuth angle, distance, sk42 coordinates
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/calculate_azimuth.png" width="50" height="50">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/calculate_azimuth.png" width="50%" height="50%">
 
 ## Show elevation profile ##
 given two positions (selected by left click), plot elevation profile using elevation data from .GMapCatcher/elevation.tiff
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/elevation_profile.png" width="50" height="50">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/elevation_profile.png" width="50%" height="50%">
 
 ## Sk42Calculator ##
 just interactable simple sk42calculator for general usage
@@ -18,18 +18,18 @@ move the nearest marker from mouse position
 
 ## Calculate intersection ##
 given two camera positions (selected by left click), insert predefined azimuth angles (insertable) of cameras, calculate the target
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/calculate_intersection.png" width="50" height="50">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/calculate_intersection.png" width="50%" height="50%">
 # Modified functionalities #
 
 ## Add marker from left click menu
 ability to add markers using input cordinates, both wgs84 and sk42
 ability to change marker color
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker.png" width="50" height="50">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker.png" width="50%" height="50%">
 
 ## Add marker with current point
 first select the marker with left click then use "add marker with current point" from right click menu
 given compass angle and distance, it will caluclate and insert new marker's position 
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker_with_current_point.png" width="50" height="50">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker_with_current_point.png" width="50%" height="50%">
 
 ## Getting the elevation data ##
 download geotiff from https://search.earthdata.nasa.gov/
