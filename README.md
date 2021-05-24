@@ -28,7 +28,8 @@ ability to change marker color
 
 ## Add marker with current point
 first select the marker with left click then use "add marker with current point" from right click menu
-given compass angle and distance, it will caluclate and insert new marker's position 
+given compass angle and distance, it will calculate and insert new marker's position 
+
 <img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker_with_current_point.png" width="25%" height="25%">
 
 ## Getting the elevation data ##
