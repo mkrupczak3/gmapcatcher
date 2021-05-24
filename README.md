@@ -1,4 +1,41 @@
-## troubleshooting packages ##
+# rafasaurus patches
+
+# Added functionalities Left click menu #
+
+## Calculate Azimuth ##
+given two positions (selected by left click), show azimuth angle, distance, sk42 coordinates
+![alt text](https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/calculate_azimuth.png)
+
+## Show elevation profile ##
+given two positions (selected by left click), plot elevation profile using elevation data from .GMapCatcher/elevation.tiff
+![alt text](https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/elevation_profile.png)
+
+## Sk42Calculator ##
+just interactable simple sk42calculator for general usage
+
+## Edit marker ##
+move the nearest marker from mouse position
+
+## Calculate intersection ##
+given two camera positions (selected by left click), insert predefined azimuth angles (insertable) of cameras, calculate the target
+![alt text](https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/calculate_intersection.png)
+# Modified functionalities #
+
+## Add marker from left click menu
+ability to add markers using input cordinates, both wgs84 and sk42
+ability to change marker color
+![alt text](https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker.png)
+
+## Add marker with current point
+first select the marker with left click then use "add marker with current point" from right click menu
+given compass angle and distance, it will caluclate and insert new marker's position 
+![alt text](https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker_with_current_point.png)
+
+## Getting the elevation data ##
+download geotiff from https://search.earthdata.nasa.gov/
+merge multiple geotiffs with oqgis" software, output file must be elevation.tiff in .GMapCatcher
+
+### troubleshooting packages ##
 for arch linux "import gobject" install "python2-gobject2" package with pacman
 
 ## Overview ##
@@ -62,7 +99,3 @@ If you choose to run directly from sources you must have all dependencies, see w
 https://github.com/heldersepu/GMapCatcher/blob/wiki/devEnv.md
 or see [win_install](win_install.md) for windows.
 
-## elevation data
-download geotiff from https://search.earthdata.nasa.gov/
-
-merge multiple geotiffs with "qgis" software output file must be elevation.tiff in .GMapCatcher
