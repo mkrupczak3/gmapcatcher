@@ -24,12 +24,12 @@ given two camera positions (selected by left click), insert predefined azimuth a
 ## Add marker from left click menu
 ability to add markers using input cordinates, both wgs84 and sk42
 ability to change marker color
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker.png" width="50%" height="50%">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker.png" width="25%" height="25%">
 
 ## Add marker with current point
 first select the marker with left click then use "add marker with current point" from right click menu
 given compass angle and distance, it will caluclate and insert new marker's position 
-<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker_with_current_point.png" width="50%" height="50%">
+<img src="https://github.com/rafasaurus/gmapcatcher/blob/master/images_doc/add_marker_with_current_point.png" width="25%" height="25%">
 
 ## Getting the elevation data ##
 download geotiff from https://search.earthdata.nasa.gov/
